@@ -1,0 +1,378 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.API\\RentBridge.API.csproj": {}
+  },
+  "projects": {
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.API\\RentBridge.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.API\\RentBridge.API.csproj",
+        "projectName": "RentBridge.API",
+        "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.API\\RentBridge.API.csproj",
+        "packagesPath": "C:\\Users\\TruongHi\\.nuget\\packages\\",
+        "outputPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.API\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TruongHi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\RentBridge.Application.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\RentBridge.Application.csproj"
+              },
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\RentBridge.Infrastructure.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\RentBridge.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "FluentValidation.AspNetCore": {
+              "target": "Package",
+              "version": "[11.3.0, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.4.1, )"
+            },
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\RentBridge.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\RentBridge.Application.csproj",
+        "projectName": "RentBridge.Application",
+        "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\RentBridge.Application.csproj",
+        "packagesPath": "C:\\Users\\TruongHi\\.nuget\\packages\\",
+        "outputPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TruongHi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj"
+              },
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj",
+        "projectName": "RentBridge.Domain",
+        "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj",
+        "packagesPath": "C:\\Users\\TruongHi\\.nuget\\packages\\",
+        "outputPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TruongHi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\RentBridge.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\RentBridge.Infrastructure.csproj",
+        "projectName": "RentBridge.Infrastructure",
+        "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\RentBridge.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\TruongHi\\.nuget\\packages\\",
+        "outputPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Infrastructure\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TruongHi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Domain\\RentBridge.Domain.csproj"
+              },
+              "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj": {
+                "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj",
+        "projectName": "RentBridge.Shared",
+        "projectPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\RentBridge.Shared.csproj",
+        "packagesPath": "C:\\Users\\TruongHi\\.nuget\\packages\\",
+        "outputPath": "D:\\Semester7\\EXE101\\RentBrige\\RentBridge.Shared\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\TruongHi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
