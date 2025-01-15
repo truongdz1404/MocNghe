@@ -1,24 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using RentBridge.Domain.Enums;
 
 namespace RentBridge.Domain.Entities
 {
-    public class Contract:BaseEntity
+    [Table("tblContracts")]
+    public class Contract : BaseEntity
     {
         public long PostId { get; set; }
-        public long TenantId { get; set; }
-        public long OwnerId { get; set; }
+        public string TenantId { get; set; } = null!;
+        public string OwnerId { get; set; } = null!;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public decimal MonthlyPrice { get; set; }
-        public string Status { get; set; } = "Active"; // "Active" or "Terminated"
+        public ContractStatus Status { get; set; } = ContractStatus.Active; // "Active" or "Terminated"
 
         // Navigation properties
         public Post Post { get; set; } = null!;
-        public User Tenant { get; set; } = null!;
-        public User Owner { get; set; } = null!;
+        public ApplicationUser Tenant { get; set; } = null!;
+        public ApplicationUser Owner { get; set; } = null!;
     }
 
 }

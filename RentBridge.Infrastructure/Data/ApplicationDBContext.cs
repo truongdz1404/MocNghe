@@ -1,12 +1,14 @@
 
 using RentBridge.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace RentBridge.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options)
     {
-        public DbSet<User> Users { get; set; } = null!;
         public DbSet<Post> Listings { get; set; } = null!;
         public DbSet<Review> Reviews { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
@@ -15,7 +17,16 @@ namespace RentBridge.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Relationships
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ApplicationUser>().ToTable("tblUsers");
+            modelBuilder.Entity<IdentityRole>().ToTable("tblRoles");
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("tblRoleClaims");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("tblUserClaims");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("tblUserRoles");
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("tblUserTokens");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("tblUserLogins");
+
+            // Message relationships
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
                 .WithMany(u => u.SentMessages)
@@ -28,35 +39,62 @@ namespace RentBridge.Infrastructure.Data
                 .HasForeignKey(m => m.ReceiverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Post>()
-                .HasOne(l => l.User)
+            // Post relationships
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.HasOne(p => p.User)
                 .WithMany(u => u.Posts)
-                .HasForeignKey(l => l.UserId);
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+                entity.Property(p => p.Price)
+                .HasPrecision(18, 2);
+            });
+
+            // Post - Post (self-referencing)
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Posts)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Review relationships
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.Reviews)
-                .HasForeignKey(r => r.UserId);
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Post)
-                .WithMany(l => l.Reviews)
-                .HasForeignKey(r => r.PostId);
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(r => r.PostId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Contract relationships
             modelBuilder.Entity<Contract>()
                 .HasOne(c => c.Post)
-                .WithOne(l => l.Contract)
-                .HasForeignKey<Contract>(c => c.PostId);
+                .WithOne(p => p.Contract)
+                .HasForeignKey<Contract>(c => c.PostId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Contract>()
                 .HasOne(c => c.Tenant)
-                .WithMany()
-                .HasForeignKey(c => c.TenantId);
+                .WithMany() 
+                .HasForeignKey(c => c.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Contract>()
+                .Property(c => c.MonthlyPrice)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Contract>()
                 .HasOne(c => c.Owner)
-                .WithMany()
-                .HasForeignKey(c => c.OwnerId);
+                .WithMany()  
+                .HasForeignKey(c => c.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AdministrativeDivision>()
+                .HasKey(a => a.Code);
         }
     }
 }

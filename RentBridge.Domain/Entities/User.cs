@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RentBridge.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace RentBridge.Domain.Entities
 {
-    public class User : BaseEntity
+    public class ApplicationUser : IdentityUser
     {
         public string FullName { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public string PasswordHash { get; set; } = null!;
-        public string? PhoneNumber { get; set; }
-        public string Role { get; set; } = "Tenant"; // "Tenant", "Owner", or "Admin"
+        public UserRole Role { get; set; } = UserRole.Tenant;
         public string? AvatarUrl { get; set; }
 
-        // Navigation properties
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<Message> SentMessages { get; set; } = new List<Message>();
