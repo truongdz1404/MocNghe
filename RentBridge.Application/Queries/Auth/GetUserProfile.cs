@@ -9,10 +9,11 @@ namespace RentBridge.Application.Queries.Auth
 {
     public class AccountResponse
     {
-        public required string username { get; set; }
-        public required string email { get; set; }
+        public required string Username { get; set; }
+        public required string Email { get; set; }
+        public required string FullName { get; set; }
         public UserRole Role { get; set; } = UserRole.Tenant;
-        public string? image { get; set; }
+        public string? AvatarUrl { get; set; }
     }
     public class GetUserProfile : IRequest<AccountResponse>
     {
@@ -40,10 +41,11 @@ namespace RentBridge.Application.Queries.Auth
                 }
                 return new AccountResponse
                 {
-                    username = user.UserName!,
-                    email = user.Email!,
+                    Username = user.UserName!,
+                    Email = user.Email!,
+                    FullName = user.FullName,
                     Role = user.Role,
-                    image = user?.AvatarUrl
+                    AvatarUrl = user?.AvatarUrl
                 };
             }
 
