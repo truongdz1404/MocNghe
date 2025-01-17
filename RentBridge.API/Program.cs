@@ -14,9 +14,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
+var configuration = builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables()
+    .Build();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
-        var connectionString = builder.Configuration.GetConnectionString("DbConnection");
+        var connectionString = configuration.GetConnectionString("DbConnection");
         options.UseSqlServer(connectionString);
     }
 );
@@ -43,16 +50,29 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddAutoMapper(typeof(ApplicationDbContext).Assembly);
 
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins(corsOrigins!)
         .AllowCredentials()
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
 });
+
+// builder.Services.AddCors(options =>
+// {
+//     options.AddPolicy("AllowAllOrigins", policy =>
+//     {
+//         policy.AllowAnyOrigin()   // Cho phép tất cả các origin
+//               .AllowAnyHeader()   // Cho phép tất cả các header
+//               .AllowAnyMethod();  // Cho phép tất cả các phương thức (GET, POST, PUT, DELETE, v.v.)
+//     });
+// });
+
 
 var app = builder.Build();
 
@@ -66,7 +86,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseRouting();
 app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

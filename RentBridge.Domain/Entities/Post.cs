@@ -21,13 +21,16 @@ namespace RentBridge.Domain.Entities
         public int WardCode { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
-        public string Images { get; set; } = "[]"; // JSON array of image URLs
+    
+        public bool VerifiedStatus { get; set; } = false;
         public PostStatus Status { get; set; } = PostStatus.Pending; // "Pending", "Active", or "Closed"
 
         // Navigation properties
         public ApplicationUser User { get; set; } = null!;
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        public ICollection<Images> Images {get; set; } = new List<Images>();
         public Contract? Contract { get; set; }
     }
 }
