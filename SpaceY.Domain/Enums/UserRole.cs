@@ -1,0 +1,11 @@
+using System.Text.Json.Serialization;
+
+namespace SpaceY.Domain.Enums
+{
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum UserRole
+    {
+        Customer,
+        Admin
+    }
+}
