@@ -13,6 +13,8 @@ namespace SpaceY.Application.Interfaces.Services
         Task<PaginatedData<CategoryDto>> GetPaginatedAsync(int pageNumber, int pageSize, bool includeDeleted = false);
         Task<CategoryDto?> GetByIdAsync(long id);
         Task<long> CreateAsync(CreateCategoryDto dto);
+        Task<IEnumerable<CategoryDto>> GetCategoryRoomAsync();
+
         Task<bool> UpdateAsync(long id, UpdateCategoryDto dto);
         Task<bool> DeleteAsync(long id);
         Task<bool> SoftDeleteAsync(long id);

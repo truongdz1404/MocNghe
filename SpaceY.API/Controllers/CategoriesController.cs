@@ -23,6 +23,13 @@ namespace SpaceY.API.Controllers
                 var categories = await _categoryService.GetAllAsync(includeDeleted);
                 return Ok(categories);
             }
+        [HttpGet("category-room")]
+
+        public async Task<IActionResult> GetCategoryRoom()
+        {
+            var categories = await _categoryService.GetCategoryRoomAsync();
+            return Ok(categories);
+        }
 
             [HttpGet("paginated")]
             public async Task<IActionResult> GetPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] bool includeDeleted = false)

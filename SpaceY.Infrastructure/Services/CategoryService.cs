@@ -28,22 +28,14 @@ namespace SpaceY.Infrastructure.Services
             return categories.Select(MapToDto);
         }
 
-        // public async Task<PaginatedData<CategoryDto>> GetPaginatedAsync(int pageNumber, int pageSize, bool includeDeleted = false)
-        // {
-        //     var paginatedData = await _repository.GetPaginatedData(pageNumber, pageSize);
+        public async Task<PaginatedData<CategoryDto>> GetPaginatedAsync(int pageNumber, int pageSize, bool includeDeleted = false)
+        {
+            var paginatedData = await _repository.GetPaginatedData(pageNumber, pageSize);
 
-        //     var items = includeDeleted
-        //         ? paginatedData.Items
-        //         : paginatedData.Items.Where(c => !c.Deleted);
 
-        //     return new PaginatedData<CategoryDto>
-        //     {
-        //         Items = items.Select(MapToDto),
-        //         TotalCount = includeDeleted ? paginatedData.TotalCount : items.Count(),
-        //         PageNumber = paginatedData.PageNumber,
-        //         PageSize = paginatedData.PageSize
-        //     };
-        // }
+            var categoryDto = paginatedData.Data.Select(MapToDto).ToList();
+            return new(categoryDto, paginatedData.TotalCount);
+        }
 
         public async Task<CategoryDto?> GetByIdAsync(long id)
         {
@@ -162,10 +154,10 @@ namespace SpaceY.Infrastructure.Services
                       .Trim();
         }
 
-        public Task<PaginatedData<CategoryDto>> GetPaginatedAsync(int pageNumber, int pageSize, bool includeDeleted = false)
+        public async Task<IEnumerable<CategoryDto>> GetCategoryRoomAsync()
         {
-            throw new NotImplementedException();
+            var categories = await _repository.GetCategoryRoomAsync();
+            return categories.Select(MapToDto);
         }
-
     }
 }

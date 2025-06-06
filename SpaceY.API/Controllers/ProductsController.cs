@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SpaceY.Application.Interfaces.Services;
+using SpaceY.Domain.DTOs.Category;
 using SpaceY.Domain.DTOs.Product;
 
 namespace SpaceY.API.Controllers
@@ -49,10 +50,20 @@ namespace SpaceY.API.Controllers
             return Ok(products);
         }
 
-        [HttpGet("paginated")]
-        public async Task<IActionResult> GetPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] bool includeDeleted = false)
+        [HttpPost("categories")]
+        public async Task<IActionResult> GetByMultipleCategories([FromBody] GetByMultipleCategoriesRequest request)
         {
-            var paginatedData = await _productService.GetPaginatedAsync(pageNumber, pageSize, includeDeleted);
+            if (request.CategoryIds == null || !request.CategoryIds.Any())
+                return BadRequest(new { Message = "Danh sách category IDs không được để trống" });
+
+            var products = await _productService.GetByMultipleCategoriesAsync(request.CategoryIds, request.UseAndLogic);
+            return Ok(products);
+        }
+
+        [HttpGet("paginated")]
+        public async Task<IActionResult> GetPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] bool includeDeleted = false, [FromQuery] long? categoryId = null)
+        {
+            var paginatedData = await _productService.GetPaginatedWithFilterAsync(pageNumber, pageSize, includeDeleted, categoryId);
             return Ok(paginatedData);
         }
 
@@ -66,7 +77,7 @@ namespace SpaceY.API.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<IActionResult> GetById(long id, [FromQuery] bool includeDetails = false)
         {
             var product = await _productService.GetByIdAsync(id, includeDetails);
@@ -149,6 +160,44 @@ namespace SpaceY.API.Controllers
                 return success
                     ? Ok(new { Message = "Ẩn sản phẩm thành công" })
                     : NotFound(new { Message = $"Không tìm thấy sản phẩm với ID: {id}" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Lỗi server", Error = ex.Message });
+            }
+        }
+
+        [HttpPost("{id}/categories")]
+        public async Task<IActionResult> AddCategoriesToProduct(long id, [FromBody] CategoryIdsRequest request)
+        {
+            try
+            {
+                if (request.CategoryIds == null || !request.CategoryIds.Any())
+                    return BadRequest(new { Message = "Danh sách category IDs không được để trống" });
+
+                var success = await _productService.AddCategoriesToProductAsync(id, request.CategoryIds);
+                return success
+                    ? Ok(new { Message = "Thêm categories vào sản phẩm thành công" })
+                    : BadRequest(new { Message = "Không thể thêm categories vào sản phẩm" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Lỗi server", Error = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}/categories")]
+        public async Task<IActionResult> RemoveCategoriesFromProduct(long id, [FromBody] CategoryIdsRequest request)
+        {
+            try
+            {
+                if (request.CategoryIds == null || !request.CategoryIds.Any())
+                    return BadRequest(new { Message = "Danh sách category IDs không được để trống" });
+
+                var success = await _productService.RemoveCategoriesFromProductAsync(id, request.CategoryIds);
+                return success
+                    ? Ok(new { Message = "Xóa categories khỏi sản phẩm thành công" })
+                    : BadRequest(new { Message = "Không thể xóa categories khỏi sản phẩm" });
             }
             catch (Exception ex)
             {

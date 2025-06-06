@@ -12,8 +12,8 @@ using SpaceY.Infrastructure.Data;
 namespace SpaceY.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250602032830_updateDb")]
-    partial class updateDb
+    [Migration("20250602173729_createDB")]
+    partial class createDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace SpaceY.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "945928df-9e03-4dbe-bc49-05f65216a6d0",
+                            Id = "e0deb534-90e7-4bc1-a63c-560cd97a1906",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "3881a357-1b58-4138-8c87-ec0c62834ee5",
+                            Id = "d16a028f-ff86-401c-909b-cb8b3fb767e1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -170,6 +170,23 @@ namespace SpaceY.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("tblUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ProductCategory", b =>
+                {
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("ProductId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCategories", (string)null);
                 });
 
             modelBuilder.Entity("SpaceY.Domain.Entities.Address", b =>
@@ -310,18 +327,15 @@ namespace SpaceY.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<long>("ProductId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ProductTypeId")
+                    b.Property<long>("ProductVariantId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("UserId", "ProductId", "ProductTypeId");
+                    b.HasKey("UserId", "ProductVariantId");
 
-                    b.HasIndex("ProductId", "ProductTypeId");
+                    b.HasIndex("ProductVariantId");
 
                     b.ToTable("CartItems");
                 });
@@ -357,6 +371,44 @@ namespace SpaceY.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("tblCategory", (string)null);
+                });
+
+            modelBuilder.Entity("SpaceY.Domain.Entities.Color", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HexCode")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("tblColor", (string)null);
                 });
 
             modelBuilder.Entity("SpaceY.Domain.Entities.Image", b =>
@@ -441,7 +493,7 @@ namespace SpaceY.Infrastructure.Migrations
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProductTypeId")
+                    b.Property<long>("ProductVariantId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
@@ -454,9 +506,9 @@ namespace SpaceY.Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductTypeId");
+                    b.HasIndex("ProductId");
 
-                    b.HasIndex("ProductId", "ProductTypeId");
+                    b.HasIndex("ProductVariantId");
 
                     b.ToTable("tblOrderDetail", (string)null);
                 });
@@ -468,9 +520,6 @@ namespace SpaceY.Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -485,10 +534,6 @@ namespace SpaceY.Infrastructure.Migrations
                     b.Property<bool>("Featured")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -501,12 +546,10 @@ namespace SpaceY.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.ToTable("tblProduct", (string)null);
                 });
 
-            modelBuilder.Entity("SpaceY.Domain.Entities.ProductType", b =>
+            modelBuilder.Entity("SpaceY.Domain.Entities.ProductVariant", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -514,31 +557,17 @@ namespace SpaceY.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<long?>("ColorId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ModifiedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("tblProductType", (string)null);
-                });
-
-            modelBuilder.Entity("SpaceY.Domain.Entities.ProductVariant", b =>
-                {
-                    b.Property<long>("ProductId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ProductTypeId")
-                        .HasColumnType("bigint");
-
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -546,12 +575,32 @@ namespace SpaceY.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SKU")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<long?>("SizeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Visible")
                         .HasColumnType("bit");
 
-                    b.HasKey("ProductId", "ProductTypeId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ProductTypeId");
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("SizeId");
+
+                    b.HasIndex("ProductId", "ColorId", "SizeId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_ProductVariant_Product_Color_Size")
+                        .HasFilter("[ColorId] IS NOT NULL AND [SizeId] IS NOT NULL");
 
                     b.ToTable("tblProductVariant", (string)null);
                 });
@@ -594,6 +643,43 @@ namespace SpaceY.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("tblReviews", (string)null);
+                });
+
+            modelBuilder.Entity("SpaceY.Domain.Entities.Size", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("tblSize", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -647,6 +733,23 @@ namespace SpaceY.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProductCategory", b =>
+                {
+                    b.HasOne("SpaceY.Domain.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProductCategory_Category_CategoryId");
+
+                    b.HasOne("SpaceY.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProductCategory_Product_ProductId");
+                });
+
             modelBuilder.Entity("SpaceY.Domain.Entities.Address", b =>
                 {
                     b.HasOne("SpaceY.Domain.Entities.ApplicationUser", "User")
@@ -669,16 +772,16 @@ namespace SpaceY.Infrastructure.Migrations
 
             modelBuilder.Entity("SpaceY.Domain.Entities.CartItem", b =>
                 {
+                    b.HasOne("SpaceY.Domain.Entities.ProductVariant", "ProductVariant")
+                        .WithMany()
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("SpaceY.Domain.Entities.ApplicationUser", null)
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SpaceY.Domain.Entities.ProductVariant", "ProductVariant")
-                        .WithMany()
-                        .HasForeignKey("ProductId", "ProductTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ProductVariant");
@@ -720,15 +823,9 @@ namespace SpaceY.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SpaceY.Domain.Entities.ProductType", "ProductType")
-                        .WithMany()
-                        .HasForeignKey("ProductTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("SpaceY.Domain.Entities.ProductVariant", "ProductVariant")
                         .WithMany()
-                        .HasForeignKey("ProductId", "ProductTypeId")
+                        .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -736,39 +833,32 @@ namespace SpaceY.Infrastructure.Migrations
 
                     b.Navigation("Product");
 
-                    b.Navigation("ProductType");
-
                     b.Navigation("ProductVariant");
-                });
-
-            modelBuilder.Entity("SpaceY.Domain.Entities.Product", b =>
-                {
-                    b.HasOne("SpaceY.Domain.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("SpaceY.Domain.Entities.ProductVariant", b =>
                 {
+                    b.HasOne("SpaceY.Domain.Entities.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("SpaceY.Domain.Entities.Product", "Product")
                         .WithMany("Variants")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SpaceY.Domain.Entities.ProductType", "ProductType")
+                    b.HasOne("SpaceY.Domain.Entities.Size", "Size")
                         .WithMany()
-                        .HasForeignKey("ProductTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Color");
 
                     b.Navigation("Product");
 
-                    b.Navigation("ProductType");
+                    b.Navigation("Size");
                 });
 
             modelBuilder.Entity("SpaceY.Domain.Entities.Reviews", b =>
@@ -799,11 +889,6 @@ namespace SpaceY.Infrastructure.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("SpaceY.Domain.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("SpaceY.Domain.Entities.Order", b =>

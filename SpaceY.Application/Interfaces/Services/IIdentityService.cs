@@ -12,6 +12,5 @@ namespace SpaceY.Application.Services
     {
         Task<IdentityResult> CreateUserAsync(RegisterDTO registerDTO, List<string> roles, bool isConfirmed = false);
         Task<bool> SignInUserAsync(Login loginDTO);
-
     }
 }

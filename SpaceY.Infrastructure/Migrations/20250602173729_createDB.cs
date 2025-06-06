@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SpaceY.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDb : Migration
+    public partial class createDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,18 +32,40 @@ namespace SpaceY.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblProductType",
+                name: "tblColor",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    HexCode = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tblProductType", x => x.Id);
+                    table.PrimaryKey("PK_tblColor", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblProduct",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Featured = table.Column<bool>(type: "bit", nullable: false),
+                    Visible = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblProduct", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,30 +83,68 @@ namespace SpaceY.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblProduct",
+                name: "tblSize",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    Featured = table.Column<bool>(type: "bit", nullable: false),
-                    Visible = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tblProduct", x => x.Id);
+                    table.PrimaryKey("PK_tblSize", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductCategories",
+                columns: table => new
+                {
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    CategoryId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCategories", x => new { x.ProductId, x.CategoryId });
                     table.ForeignKey(
-                        name: "FK_tblProduct_tblCategory_CategoryId",
+                        name: "FK_ProductCategory_Category_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "tblCategory",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductCategory_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "tblProduct",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblImage",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblImage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tblImage_tblProduct_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "tblProduct",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,53 +169,44 @@ namespace SpaceY.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblImage",
+                name: "tblProductVariant",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    ColorId = table.Column<long>(type: "bigint", nullable: true),
+                    SizeId = table.Column<long>(type: "bigint", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Stock = table.Column<int>(type: "int", nullable: false),
+                    SKU = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Visible = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tblImage", x => x.Id);
+                    table.PrimaryKey("PK_tblProductVariant", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_tblImage_tblProduct_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "tblProduct",
+                        name: "FK_tblProductVariant_tblColor_ColorId",
+                        column: x => x.ColorId,
+                        principalTable: "tblColor",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tblProductVariant",
-                columns: table => new
-                {
-                    ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    ProductTypeId = table.Column<long>(type: "bigint", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Visible = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblProductVariant", x => new { x.ProductId, x.ProductTypeId });
-                    table.ForeignKey(
-                        name: "FK_tblProductVariant_tblProductType_ProductTypeId",
-                        column: x => x.ProductTypeId,
-                        principalTable: "tblProductType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_tblProductVariant_tblProduct_ProductId",
                         column: x => x.ProductId,
                         principalTable: "tblProduct",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tblProductVariant_tblSize_SizeId",
+                        column: x => x.SizeId,
+                        principalTable: "tblSize",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,19 +214,18 @@ namespace SpaceY.Infrastructure.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    ProductTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductVariantId = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => new { x.UserId, x.ProductId, x.ProductTypeId });
+                    table.PrimaryKey("PK_CartItems", x => new { x.UserId, x.ProductVariantId });
                     table.ForeignKey(
-                        name: "FK_CartItems_tblProductVariant_ProductId_ProductTypeId",
-                        columns: x => new { x.ProductId, x.ProductTypeId },
+                        name: "FK_CartItems_tblProductVariant_ProductVariantId",
+                        column: x => x.ProductVariantId,
                         principalTable: "tblProductVariant",
-                        principalColumns: new[] { "ProductId", "ProductTypeId" },
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,6 +315,7 @@ namespace SpaceY.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -380,7 +431,7 @@ namespace SpaceY.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<long>(type: "bigint", nullable: false),
                     ProductId = table.Column<long>(type: "bigint", nullable: false),
-                    ProductTypeId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductVariantId = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -396,16 +447,10 @@ namespace SpaceY.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_tblOrderDetail_tblProductType_ProductTypeId",
-                        column: x => x.ProductTypeId,
-                        principalTable: "tblProductType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_tblOrderDetail_tblProductVariant_ProductId_ProductTypeId",
-                        columns: x => new { x.ProductId, x.ProductTypeId },
+                        name: "FK_tblOrderDetail_tblProductVariant_ProductVariantId",
+                        column: x => x.ProductVariantId,
                         principalTable: "tblProductVariant",
-                        principalColumns: new[] { "ProductId", "ProductTypeId" },
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_tblOrderDetail_tblProduct_ProductId",
@@ -420,19 +465,35 @@ namespace SpaceY.Infrastructure.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2b86cd29-e8e2-4f10-952c-ec737be4dc00", null, "Customer", "CUSTOMER" },
-                    { "89676630-ecfd-4245-a098-c05e8a8a1369", null, "Admin", "ADMIN" }
+                    { "d16a028f-ff86-401c-909b-cb8b3fb767e1", null, "Admin", "ADMIN" },
+                    { "e0deb534-90e7-4bc1-a63c-560cd97a1906", null, "Customer", "CUSTOMER" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ProductId_ProductTypeId",
+                name: "IX_CartItems_ProductVariantId",
                 table: "CartItems",
-                columns: new[] { "ProductId", "ProductTypeId" });
+                column: "ProductVariantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_CategoryId",
+                table: "ProductCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_ProductId",
+                table: "ProductCategories",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblAddress_UserId",
                 table: "tblAddress",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblColor_Name",
+                table: "tblColor",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblImage_ProductId",
@@ -450,24 +511,31 @@ namespace SpaceY.Infrastructure.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblOrderDetail_ProductId_ProductTypeId",
+                name: "IX_tblOrderDetail_ProductId",
                 table: "tblOrderDetail",
-                columns: new[] { "ProductId", "ProductTypeId" });
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblOrderDetail_ProductTypeId",
+                name: "IX_tblOrderDetail_ProductVariantId",
                 table: "tblOrderDetail",
-                column: "ProductTypeId");
+                column: "ProductVariantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblProduct_CategoryId",
-                table: "tblProduct",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tblProductVariant_ProductTypeId",
+                name: "IX_ProductVariant_Product_Color_Size",
                 table: "tblProductVariant",
-                column: "ProductTypeId");
+                columns: new[] { "ProductId", "ColorId", "SizeId" },
+                unique: true,
+                filter: "[ColorId] IS NOT NULL AND [SizeId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblProductVariant_ColorId",
+                table: "tblProductVariant",
+                column: "ColorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblProductVariant_SizeId",
+                table: "tblProductVariant",
+                column: "SizeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblReviews_ProductId",
@@ -490,6 +558,12 @@ namespace SpaceY.Infrastructure.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblSize_Name",
+                table: "tblSize",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblUserClaims_UserId",
@@ -551,6 +625,9 @@ namespace SpaceY.Infrastructure.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
+                name: "ProductCategories");
+
+            migrationBuilder.DropTable(
                 name: "tblImage");
 
             migrationBuilder.DropTable(
@@ -575,6 +652,9 @@ namespace SpaceY.Infrastructure.Migrations
                 name: "tblUserTokens");
 
             migrationBuilder.DropTable(
+                name: "tblCategory");
+
+            migrationBuilder.DropTable(
                 name: "tblOrder");
 
             migrationBuilder.DropTable(
@@ -584,13 +664,13 @@ namespace SpaceY.Infrastructure.Migrations
                 name: "tblRoles");
 
             migrationBuilder.DropTable(
-                name: "tblProductType");
+                name: "tblColor");
 
             migrationBuilder.DropTable(
                 name: "tblProduct");
 
             migrationBuilder.DropTable(
-                name: "tblCategory");
+                name: "tblSize");
 
             migrationBuilder.DropTable(
                 name: "tblUsers");

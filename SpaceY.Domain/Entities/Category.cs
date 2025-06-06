@@ -18,7 +18,7 @@ namespace SpaceY.Domain.Entities
         public bool Editing { get; set; } = false;
         [NotMapped]
         public bool IsNew { get; set; } = false;
-        public List<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
 
     }
 }

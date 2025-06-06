@@ -17,25 +17,35 @@ namespace SpaceY.Infrastructure.Repositories
         {
             return await dbContext.Set<Product>()
                 .Where(p => p.Visible && !p.Deleted)
-                .Include(p => p.Category)
+                .Include(p => p.Categories) 
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
 
-
-        public async Task<PaginatedData<Product>> GetPaginatedWithFilterAsync(int pageNumber, int pageSize, bool includeDeleted = false)
+        public async Task<PaginatedData<Product>> GetPaginatedWithFilterAsync(int pageNumber, int pageSize, bool includeDeleted = false, long? categoryId = null)
         {
             IQueryable<Product> queryable = dbContext.Set<Product>()
-                .Include(p => p.Category)
+                .Include(p => p.Categories) 
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
-                    .ThenInclude(v => v.ProductType)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .Include(p => p.Reviews);
 
-            // Filter BEFORE pagination
             if (!includeDeleted)
             {
                 queryable = queryable.Where(p => !p.Deleted);
+            }
+
+            if (categoryId.HasValue)
+            {
+                queryable = queryable.Where(p => p.Categories.Any(c => c.Id == categoryId.Value));
             }
 
             var totalCount = await queryable.CountAsync();
@@ -49,13 +59,16 @@ namespace SpaceY.Infrastructure.Repositories
             return new PaginatedData<Product>(data, totalCount);
         }
 
-
-
         public async Task<IEnumerable<Product>> GetActiveAsync()
         {
             return await dbContext.Set<Product>()
                 .Where(p => !p.Deleted)
-                .Include(p => p.Category)
+                .Include(p => p.Categories)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -64,7 +77,12 @@ namespace SpaceY.Infrastructure.Repositories
         {
             return await dbContext.Set<Product>()
                 .Where(p => p.Featured && p.Visible && !p.Deleted)
-                .Include(p => p.Category)
+               .Include(p => p.Categories)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -72,8 +90,39 @@ namespace SpaceY.Infrastructure.Repositories
         public async Task<IEnumerable<Product>> GetByCategoryAsync(long categoryId)
         {
             return await dbContext.Set<Product>()
-                .Where(p => p.CategoryId == categoryId && p.Visible && !p.Deleted)
-                .Include(p => p.Category)
+                .Where(p => p.Categories.Any(c => c.Id == categoryId) && p.Visible && !p.Deleted) // Thay đổi logic
+                .Include(p => p.Categories)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetByMultipleCategoriesAsync(List<long> categoryIds, bool useAndLogic = false)
+        {
+
+            IQueryable<Product> query = dbContext.Products
+                 .Include(p => p.Categories)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
+                .Where(p => !p.Deleted);
+
+            if (useAndLogic)
+            {
+                query = query.Where(p => categoryIds.All(id => p.Categories.Any(c => c.Id == id)));
+            }
+            else
+            {
+                query = query.Where(p => p.Categories.Any(c => categoryIds.Contains(c.Id)));
+            }
+
+            return await query
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
@@ -82,9 +131,12 @@ namespace SpaceY.Infrastructure.Repositories
         {
             return await dbContext.Set<Product>()
                 .Where(p => p.Id == id && !p.Deleted)
-                .Include(p => p.Category)
+               .Include(p => p.Categories)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .Include(p => p.Reviews)
                 .FirstOrDefaultAsync();
         }
@@ -93,9 +145,12 @@ namespace SpaceY.Infrastructure.Repositories
         {
             return await dbContext.Set<Product>()
                 .Where(p => !p.Deleted)
-                .Include(p => p.Category)
+               .Include(p => p.Categories)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .Include(p => p.Reviews)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
@@ -117,9 +172,79 @@ namespace SpaceY.Infrastructure.Repositories
             return await dbContext.Set<Product>()
                 .Where(p => (p.Title.Contains(searchTerm) || p.Description.Contains(searchTerm))
                            && p.Visible && !p.Deleted)
-                .Include(p => p.Category)
+                .Include(p => p.Categories)
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                    .ThenInclude(v => v.Size)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
+        }
+
+        public async Task AddCategoriesToProductAsync(long productId, List<long> categoryIds)
+        {
+            var product = await dbContext.Set<Product>()
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null) return;
+
+            var categories = await dbContext.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var category in categories)
+            {
+                if (!product.Categories.Contains(category))
+                {
+                    product.Categories.Add(category);
+                }
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task RemoveCategoriesFromProductAsync(long productId, List<long> categoryIds)
+        {
+            var product = await dbContext.Set<Product>()
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null) return;
+
+            var categoriesToRemove = product.Categories
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToList();
+
+            foreach (var category in categoriesToRemove)
+            {
+                product.Categories.Remove(category);
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateProductCategoriesAsync(long productId, List<long> categoryIds)
+        {
+            var product = await dbContext.Set<Product>()
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null) return;
+
+            product.Categories.Clear();
+
+            var categories = await dbContext.Set<Category>()
+                .Where(c => categoryIds.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (var category in categories)
+            {
+                product.Categories.Add(category);
+            }
+
+            await dbContext.SaveChangesAsync();
         }
     }
 }

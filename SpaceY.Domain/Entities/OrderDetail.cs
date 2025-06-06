@@ -8,22 +8,21 @@ using System.Threading.Tasks;
 namespace SpaceY.Domain.Entities
 
 {
-    public class OrderDetail : BaseEntity
-    {
-        public long OrderId { get; set; } 
-        public Order Order { get; set; } = null!;
+        public class OrderDetail : BaseEntity
+        {
+            public long OrderId { get; set; } 
+            public Order Order { get; set; } = null!;
 
-        public Product Product { get; set; } = null!;
-        public long ProductId { get; set; }
+            public Product Product { get; set; } = null!;
+            public long ProductId { get; set; }
 
-        public ProductType ProductType { get; set; } = null!;
-        public long ProductTypeId { get; set; }
+            public long ProductVariantId { get; set; }
 
-        public ProductVariant ProductVariant { get; set; } = null!; 
+            public ProductVariant ProductVariant { get; set; } = null!; 
 
-        public int Quantity { get; set; }
+            public int Quantity { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalPrice { get; set; }
-    }
+            [Column(TypeName = "decimal(18,2)")]
+            public decimal TotalPrice { get; set; }
+        }
 }

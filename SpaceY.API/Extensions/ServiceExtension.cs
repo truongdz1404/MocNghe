@@ -22,12 +22,18 @@ public static class ServiceExtension
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IProductVariantService, ProductVariantService>();
+        services.AddScoped<IColorService, ColorService>();
+        services.AddScoped<ISizeService, SizeService>();
         #endregion
 
         #region Repositories
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
+        services.AddScoped<IColorRepository, ColorRepository>();
+        services.AddScoped<ISizeRepository, SizeRepository>();
         #endregion
 
 

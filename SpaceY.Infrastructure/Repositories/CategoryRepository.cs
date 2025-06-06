@@ -47,6 +47,22 @@ namespace SpaceY.Infrastructure.Repositories
 
             return await query.AnyAsync();
         }
+
+        public async Task<IEnumerable<Category>> GetByIdsAsync(IEnumerable<long> ids)
+        {
+            var list = await dbContext.Set<Category>()
+                .Where(c => ids.Contains(c.Id) && !c.Deleted)
+                .ToListAsync();
+            return list;
+        }
+
+        public async Task<IEnumerable<Category>> GetCategoryRoomAsync()
+        {
+            return await dbContext.Set<Category>()
+      .Where(c => EF.Functions.Like(c.Name, "%Phòng%") && !c.Deleted)
+      .ToListAsync();
+
+        }
     }
 
 }
