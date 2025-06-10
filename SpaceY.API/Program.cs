@@ -129,7 +129,9 @@ builder.Services
             }
         };
     });
-        
+    
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
+
 builder.Services.AddAuthorization();
 
 builder.Services.RegisterService();
