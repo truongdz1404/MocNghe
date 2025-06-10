@@ -129,7 +129,7 @@ builder.Services
             }
         };
     });
-    
+
 builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 builder.Services.AddAuthorization();
@@ -138,7 +138,7 @@ builder.Services.RegisterService();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
