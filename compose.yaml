@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: spacey-db-prod
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=spacey
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+
+  api:
+    image: ${DOCKER_REGISTRY-}spacey-api:latest
+    container_name: spacey-api-prod
+    build:
+      context: .
+      dockerfile: SpaceY.API/Dockerfile
+    environment: 
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DbConnection=Host=db;Database=spacey;Username=postgres;Password=postgres
+    depends_on:
+      - db
+    ports:
+      - "6000:8080"
+    volumes:
+      - ~/.aspnet/https:/https:ro
+    restart: always
+
+volumes:
+  db-data:
