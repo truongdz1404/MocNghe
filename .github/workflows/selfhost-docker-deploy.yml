@@ -14,7 +14,9 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Stop and clean old containers
-      run: docker compose -f compose.yaml down
+      run: docker-compose -f compose.yaml down
 
     - name: Pull images and build
-      run: docker compose -f compose.yaml pull && docker compose -f compose.yaml up -d --build
+      run: |
+        docker-compose -f compose.yaml pull
+        docker-compose -f compose.yaml up -d --build
