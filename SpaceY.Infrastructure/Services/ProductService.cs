@@ -79,7 +79,7 @@ namespace SpaceY.Infrastructure.Services
                 ? await _repository.GetWithDetailsAsync(id)
                 : await _repository.GetById(id);
 
-            return product?.Deleted == true ? null : product != null ? MapToDto(product) : null;
+            return product != null ? MapToDto(product) : null;
         }
 
         public async Task<IEnumerable<ProductDto>> SearchAsync(string searchTerm)

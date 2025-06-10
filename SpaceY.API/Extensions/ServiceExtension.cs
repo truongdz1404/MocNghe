@@ -34,6 +34,8 @@ public static class ServiceExtension
         services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
         services.AddScoped<IColorRepository, ColorRepository>();
         services.AddScoped<ISizeRepository, SizeRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
+        // services.AddScoped<ICartRepository, CartRepository>();
         #endregion
 
 

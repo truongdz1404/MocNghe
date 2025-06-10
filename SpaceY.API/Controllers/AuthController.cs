@@ -42,32 +42,29 @@ namespace SpaceY.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] Login loginDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
-                var response = await _mediator.Send(
-                    new Login { Email = loginDTO.Email, Password = loginDTO.Password }
-                );
-                SetTokensInsideCookie(
-                    new TokenDTO
-                    {
-                        AccessToken = response.AccessToken!,
-                        RefreshToken = response.RefreshToken!,
-                    },
-                    HttpContext
-                );
+                var isValid = await _identityService.SignInUserAsync(loginDTO);
+                if (!isValid) throw new Exception("Email or password is incorrect");
+                var tokenDTO = await _userService
+                    .CreateAuthTokenAsync(EmailHelper.GetUserName(loginDTO.Email), _jwtConfig.RefreshTokenValidityInDays);
+                SetTokensInsideCookie(tokenDTO, HttpContext);
 
-                return Ok(
-                    new Response { Status = ResponseStatus.SUCCESS, Data = response, Message = "Login successfully" }
-                );
+                return Ok(new Response
+                {
+                    Status = ResponseStatus.SUCCESS,
+                    Data = tokenDTO,
+                    Message = "Login successfully"
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(
-                    new Response { Status = ResponseStatus.ERROR, Message = ex.Message }
-                );
+                return BadRequest(new Response
+                {
+                    Status = ResponseStatus.ERROR,
+                    Message = ex.Message
+                });
             }
         }
 

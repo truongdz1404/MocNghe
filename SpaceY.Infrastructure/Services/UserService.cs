@@ -28,7 +28,7 @@ namespace SpaceY.Infrastructure.Service
             {
                 user.RefreshToken = _tokenService.GenerateRefreshToken();
                 if (expDays > 0)
-                    user.RefreshTokenExpiryTime = DateTime.Now.AddDays(expDays);
+                    user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(expDays);
 
                 var updateResult = await _userManager.UpdateAsync(user);
                 if (!updateResult.Succeeded)
@@ -77,7 +77,7 @@ namespace SpaceY.Infrastructure.Service
         {
             var user = await _userRepository.FindUserByRefreshTokenAsync(refeshToken)
                 ?? throw new Exception("User not found");
-            if (user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
                 throw new Exception("Invalid refresh token");
             return await CreateAuthTokenAsync(user);
         }

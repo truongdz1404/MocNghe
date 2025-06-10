@@ -187,8 +187,6 @@ namespace SpaceY.Infrastructure.Data
                 .WithMany(u => u.CartItems)
                 .HasForeignKey(ci => ci.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.SeedDatabase();
         }
 
         public DbSet<Product> Products { get; set; }

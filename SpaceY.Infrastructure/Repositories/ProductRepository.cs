@@ -17,7 +17,7 @@ namespace SpaceY.Infrastructure.Repositories
         {
             return await dbContext.Set<Product>()
                 .Where(p => p.Visible && !p.Deleted)
-                .Include(p => p.Categories) 
+                .Include(p => p.Categories)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.Color)
@@ -30,7 +30,7 @@ namespace SpaceY.Infrastructure.Repositories
         public async Task<PaginatedData<Product>> GetPaginatedWithFilterAsync(int pageNumber, int pageSize, bool includeDeleted = false, long? categoryId = null)
         {
             IQueryable<Product> queryable = dbContext.Set<Product>()
-                .Include(p => p.Categories) 
+                .Include(p => p.Categories)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.Color)
@@ -144,7 +144,6 @@ namespace SpaceY.Infrastructure.Repositories
         public async Task<IEnumerable<Product>> GetWithDetailsAsync()
         {
             return await dbContext.Set<Product>()
-                .Where(p => !p.Deleted)
                .Include(p => p.Categories)
                 .Include(p => p.Images)
                 .Include(p => p.Variants)

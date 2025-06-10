@@ -13,6 +13,6 @@ namespace SpaceY.Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime ModifiedAt { get; private set; } = DateTime.Now;
+        public DateTime ModifiedAt { get; private set; } = DateTime.UtcNow;
     }
 }

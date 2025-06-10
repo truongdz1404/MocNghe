@@ -46,7 +46,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 var jwtConfig = jwtSection.Get<JwtConfig>()
@@ -61,7 +60,7 @@ var configuration = builder.Configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
         var connectionString = configuration.GetConnectionString("DbConnection");
-        options.UseSqlServer(connectionString);
+        options.UseNpgsql(connectionString);
     }
 );
 builder.Services.AddMediatR(cfg =>
@@ -130,7 +129,8 @@ builder.Services
             }
         };
     });
-
+        
+builder.Services.AddAuthorization();
 
 builder.Services.RegisterService();
 
