@@ -7,11 +7,11 @@ import ProductServices from "@/services/ProductServices";
 import CloudinaryImageUploader from "@/components/image/ImageUploader"; 
 import {
     CreateProductDto,
-    ProductVariantDto,
     ColorDto,
     SizeDto
 } from "@/types/product";
 import { CategoryDto } from "@/types/category";
+import { ProductVariantDto } from "@/types/productVariant";
 
 const mockColors: ColorDto[] = [
     { id: 1, name: "Đỏ", hexCode: "#FF0000" },
