@@ -37,6 +37,7 @@ namespace SpaceY.Infrastructure.Service
                 var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
             new(ClaimTypes.Email, user.Email ?? string.Empty)
         };
 
@@ -56,6 +57,19 @@ namespace SpaceY.Infrastructure.Service
             }
         }
 
+
+        public async Task RemoveRefreshTokenAsync(string refreshToken)
+
+        {
+            var appUser = await _userRepository.FindUserByRefreshTokenAsync(refreshToken);
+            if (appUser == null)
+            {
+                Console.WriteLine("User not found");
+                return;
+            }
+            appUser.RefreshToken = "";
+            await _userManager.UpdateAsync(appUser);
+        }
 
         public async Task<TokenDTO> CreateAuthTokenAsync(string userName, int expDays = -1)
         {

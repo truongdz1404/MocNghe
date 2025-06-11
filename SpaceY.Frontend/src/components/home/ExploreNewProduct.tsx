@@ -74,21 +74,22 @@ export default function ExploreNewProduct() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {products.map((product) => (
                     <div key={product.id} className="relative cursor-pointer hover:opacity-90 transition-opacity">
-                        <Image
-                            alt={product.title}
-                            src={(product.images[0].url)}
-                            width={300}
-                            height={300}
-                            className="object-cover w-full h-[300px] rounded"
-                        />
-                        <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-2">
-                            <div className="font-medium">{product.title}</div>
-                            {/* {product.price && (
+                       <Link href={`/product/${product.id}`}>
+                            <Image
+                                alt={product.title}
+                                src={(product.images[0].url)}
+                                width={300}
+                                height={300}
+                                className="object-cover w-full h-[300px] rounded"
+                            />
+                            <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 text-white p-2">
+                                <div className="font-medium">{product.title}</div>
+                                {/* {product.price && (
                                 <div className="text-sm text-yellow-300">
                                     {product.price.toLocaleString('vi-VN')} VND
                                 </div>
                             )} */}
-                        </div>
+                            </div></Link>
                     </div>
                 ))}
             </div>

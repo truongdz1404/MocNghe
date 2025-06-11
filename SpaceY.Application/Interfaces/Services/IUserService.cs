@@ -11,6 +11,7 @@ namespace SpaceY.Application.Services
         Task<TokenDTO> CreateAuthTokenAsync(string userName, int expDays = -1);
         Task<TokenDTO> RefeshAuthTokenAsync(string refeshToken);
         Task<string?> GetRefreshTokenAsync(string userName);
+        Task RemoveRefreshTokenAsync(string refreshToken);
 
     }
 }

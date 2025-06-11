@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -46,7 +47,7 @@ namespace SpaceY.API.Controllers
             try
             {
                 var isValid = await _identityService.SignInUserAsync(loginDTO);
-                if (!isValid) throw new Exception("Email or password is incorrect");
+                if (!isValid) throw new Exception("Sai tên đăng nhập hoặc mật khẩu");
                 var tokenDTO = await _userService
                     .CreateAuthTokenAsync(EmailHelper.GetUserName(loginDTO.Email), _jwtConfig.RefreshTokenValidityInDays);
                 SetTokensInsideCookie(tokenDTO, HttpContext);
@@ -64,6 +65,33 @@ namespace SpaceY.API.Controllers
                 {
                     Status = ResponseStatus.ERROR,
                     Message = ex.Message
+                });
+            }
+        }
+
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                var userName = (HttpContext.User?.Identity?.Name) ?? throw new Exception("User is not authenticated!");
+                var refreshToken = await _userService.GetRefreshTokenAsync(userName) ?? throw new Exception("Not found refresh token!");
+                await _userService.RemoveRefreshTokenAsync(refreshToken);
+                RemoveTokensInsideCookie(HttpContext);
+                await HttpContext.SignOutAsync();
+                return Ok(new Response
+                {
+                    Status = ResponseStatus.SUCCESS,
+                    Message = "Logout successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Response
+                {
+                    Status = ResponseStatus.ERROR,
+                    Message = $"Logout failed! Error: {ex.Message}"
                 });
             }
         }
@@ -148,7 +176,7 @@ namespace SpaceY.API.Controllers
                 return BadRequest(new Response
                 {
                     Status = ResponseStatus.ERROR,
-                    Message = "Invalid input",
+                    Message = "Thông tin đăng kí không hợp lệ",
                     Data = ModelState
                 });
             }
