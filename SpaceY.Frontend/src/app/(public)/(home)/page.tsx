@@ -80,7 +80,7 @@ export default function Home() {
               </div>
             </div>
           </div> */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">
               Không Gian Mộc Nghệ
             </h2>
@@ -90,7 +90,7 @@ export default function Home() {
               <img alt="Bedroom with wooden decor" className="w-full h-auto" height="200" src="https://storage.googleapis.com/a1aa/image/nIhwSWuhmGh6ZqQJlhXmlE6b9L1I480aFCHkhtijeOo.jpg" width="300" />
               <img alt="Kitchen with wooden decor" className="w-full h-auto" height="200" src="https://storage.googleapis.com/a1aa/image/J_cblUoZFpNJ0JsqI_K_j8zxXHywq_wFjhzivXE5cIQ.jpg" width="300" />
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col md:flex-row items-center mb-8">
             <div className="md:w-1/2 mb-4 md:mb-0">
               <h2 className="text-2xl font-bold mb-2">

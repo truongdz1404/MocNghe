@@ -46,7 +46,7 @@ namespace SpaceY.API.Controllers
             try
             {
                 var isValid = await _identityService.SignInUserAsync(loginDTO);
-                if (!isValid) throw new Exception("Email or password is incorrect");
+                if (!isValid) throw new Exception("Sai tên đăng nhập hoặc mật khẩu");
                 var tokenDTO = await _userService
                     .CreateAuthTokenAsync(EmailHelper.GetUserName(loginDTO.Email), _jwtConfig.RefreshTokenValidityInDays);
                 SetTokensInsideCookie(tokenDTO, HttpContext);
@@ -148,7 +148,7 @@ namespace SpaceY.API.Controllers
                 return BadRequest(new Response
                 {
                     Status = ResponseStatus.ERROR,
-                    Message = "Invalid input",
+                    Message = "Thông tin đăng kí không hợp lệ",
                     Data = ModelState
                 });
             }

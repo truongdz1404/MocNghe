@@ -37,6 +37,7 @@ namespace SpaceY.Infrastructure.Service
                 var claims = new List<Claim>
         {
             new(ClaimTypes.Name, user.UserName ?? string.Empty),
+            new(ClaimTypes.NameIdentifier, user.Id ?? string.Empty),
             new(ClaimTypes.Email, user.Email ?? string.Empty)
         };
 

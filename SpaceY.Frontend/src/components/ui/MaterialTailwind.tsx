@@ -34,6 +34,7 @@ import {
     CardHeaderProps,
     CardFooterProps,
     Spinner as MTSpinner,
+    Checkbox as MTCheckbox,
     Alert as MTAlert,
     Menu as MTMenu,
     MenuHandler as MTMenuHandler,
@@ -45,6 +46,7 @@ import {
     MenuHandlerProps,
     MenuItemProps,
     MenuListProps,
+    CheckboxProps,
 } from '@material-tailwind/react';
 import { StepProps } from '@material-tailwind/react/components/Stepper/Step';
 
@@ -58,6 +60,21 @@ export const Spinner = ({
 }: SpinnerProps & { onPointerEnterCapture?: () => void; onPointerLeaveCapture?: () => void; }) => (
     <MTSpinner
         {...props}
+        onPointerEnterCapture={onPointerEnterCapture}
+        onPointerLeaveCapture={onPointerLeaveCapture}
+    />
+  );
+export const Checkbox = ({
+    onPointerEnterCapture = () => { },
+    onPointerLeaveCapture = () => { },
+    crossOrigin = "",
+    ...props
+}: CheckboxProps & { onPointerEnterCapture?: () => void;
+     onPointerLeaveCapture?: () => void;
+        crossOrigin?: string; }) => (
+    <MTCheckbox
+        {...props}
+        crossOrigin={crossOrigin}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
     />

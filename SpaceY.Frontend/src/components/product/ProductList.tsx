@@ -3,11 +3,25 @@ import { Button, Card, CardBody, CardFooter, Chip, Typography } from '@/componen
 import { ShoppingCartIcon, StarIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React from 'react'
+import React, { useState } from 'react'
+import { toast } from 'react-toastify';
+import cartServices, { AddToCartRequest } from '@/services/CartServices';
+import { AxiosError } from 'axios';
+
 interface PageProps {
-     products: ProductDto[] 
+    products: ProductDto[]
 }
+
+export interface AddToCartParams {
+    productVariantId: number;
+    quantity: number;
+    onSuccess?: () => void;
+    onError?: (error: string) => void;
+    showNotification?: boolean;
+}
+
 export default function ProductList({ products }: PageProps) {
+    const [addingToCart, setAddingToCart] = useState<Set<number>>(new Set());
 
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -40,11 +54,122 @@ export default function ProductList({ products }: PageProps) {
             />
         ));
     };
+
+    const handleAddToCart = async ({
+        productVariantId,
+        quantity,
+        onSuccess,
+        onError,
+        showNotification = true
+    }: AddToCartParams): Promise<boolean> => {
+        try {
+            // Validate input
+            if (!productVariantId || productVariantId <= 0) {
+                const errorMsg = 'Invalid product variant ID';
+                if (showNotification) {
+                    toast.error(errorMsg);
+                }
+                onError?.(errorMsg);
+                return false;
+            }
+
+            if (!quantity || quantity <= 0) {
+                const errorMsg = 'Quantity must be at least 1';
+                if (showNotification) {
+                    toast.error(errorMsg);
+                }
+                onError?.(errorMsg);
+                return false;
+            }
+
+            // Prepare request data
+            const requestData: AddToCartRequest = {
+                productVariantId,
+                quantity
+            };
+
+            // Call cart service
+            const response = await cartServices.addToCart(requestData);
+
+            if (response.success) {
+                // Success handling
+                if (showNotification) {
+                    toast.success(response.message || 'Thêm vào giỏ hàng thành công!');
+                }
+                onSuccess?.();
+                return true;
+            } else {
+                // Handle API errors
+                const errorMsg = response.message || 'Không thể thêm sản phẩm vào giỏ hàng';
+                if (showNotification) {
+                    toast.error(errorMsg);
+                }
+                onError?.(errorMsg);
+                return false;
+            }
+        } catch (error: unknown) {
+            let errorMsg = 'Không thể thêm sản phẩm vào giỏ hàng';
+
+            if (error instanceof AxiosError) {
+                errorMsg = error.response?.data?.message || error.message || errorMsg;
+            } else if (error instanceof Error) {
+                errorMsg = error.message;
+            }
+
+            console.error('Error adding to cart:', error);
+
+            if (showNotification) {
+                toast.error(errorMsg);
+            }
+            onError?.(errorMsg);
+            return false;
+        }
+    };
+
+    const onAddToCartClick = async (product: ProductDto) => {
+        // Get the first variant (assuming it's the default one)
+        const defaultVariant = product.variants[0];
+
+        if (!defaultVariant) {
+            toast.error('Sản phẩm không có phiên bản khả dụng');
+            return;
+        }
+
+        // Add product ID to loading set
+        setAddingToCart(prev => new Set(prev).add(product.id));
+
+        try {
+            const success = await handleAddToCart({
+                productVariantId: defaultVariant.id,
+                quantity: 1,
+                onSuccess: () => {
+                    console.log('Successfully added to cart:', product.title);
+                },
+                onError: (error) => {
+                    console.error('Failed to add to cart:', error);
+                }
+            });
+
+            if (success) {
+                // Additional success handling if needed
+                console.log('Product added to cart successfully');
+            }
+        } finally {
+            // Remove product ID from loading set
+            setAddingToCart(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(product.id);
+                return newSet;
+            });
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => {
                 const discount = getDiscountPercentage(product);
                 const primaryImage = getPrimaryImage(product);
+                const isAddingToCart = addingToCart.has(product.id);
 
                 return (
                     <Card key={product.id} className="relative group hover:shadow-xl transition-shadow duration-300">
@@ -96,7 +221,8 @@ export default function ProductList({ products }: PageProps) {
                                             color="blue-gray"
                                             variant="ghost"
                                             className="border bg-blue-100"
-                                        /></Link>
+                                        />
+                                    </Link>
                                 ))}
                             </div>
 
@@ -161,14 +287,15 @@ export default function ProductList({ products }: PageProps) {
                                 size="lg"
                                 fullWidth
                                 className="flex items-center justify-center gap-2"
-                                // color={product.inStock ? "" : "gray"}
-                                disabled={!product.inStock}
-                                onClick={() => {
-                                    console.log('Add to cart:', product.id);
-                                }}
+                                color={product.inStock ? "black" : "gray"}
+                                disabled={!product.inStock || isAddingToCart}
+                                onClick={() => onAddToCartClick(product)}
                             >
-                                <ShoppingCartIcon className="h-8 w-5" />
-                                {product.inStock ? 'Thêm vào giỏ' : 'Hết hàng'}
+                                <ShoppingCartIcon className="h-5 w-5" />
+                                {isAddingToCart
+                                    ? 'Đang thêm...'
+                                    : (product.inStock ? 'Thêm vào giỏ' : 'Hết hàng')
+                                }
                             </Button>
                         </CardFooter>
                     </Card>
