@@ -1,19 +1,26 @@
 "use client"
-import { isLoggedIn } from '@/helpers/LoginHelper';
 import AuthServices from '@/services/AuthServices';
 import { LogOut, Search, ShoppingBag, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import MocNgheLogo from '../../public/assets/logo1.png';
 import Image from 'next/image';
-// import React, { useState } from 'react'
+import { useState, useEffect } from 'react';
 
 export default function NavBar() {
-    // const [isShopHovered, setIsShopHovered] = useState(false)
     const router = useRouter();
-    const isLogin = isLoggedIn();
+    const [isLogin, setIsLogin] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+    // Kiểm tra login status chỉ trên client
+    useEffect(() => {
+        setIsClient(true);
+        const token = localStorage.getItem('jwtToken');
+        setIsLogin(!!token);
+    }, []);
+
     const handleCartClick = (e: React.MouseEvent) => {
-        e.preventDefault(); // ngăn điều hướng mặc định
+        e.preventDefault();
         if (!isLogin) {
             router.push("/login");
         } else {
@@ -24,12 +31,55 @@ export default function NavBar() {
     const handleLogout = async () => {
         try {
             await AuthServices.Logout();
-            localStorage.removeItem('jwtToken'); // hoặc tên token bạn đang dùng
-            router.push('/login'); // hoặc chuyển hướng về trang chủ
+            localStorage.removeItem('jwtToken');
+            setIsLogin(false); // Update state
+            router.push('/login');
         } catch (error) {
             console.error('Lỗi khi đăng xuất:', error);
         }
     };
+
+    // Không render user-specific content cho đến khi component đã mount trên client
+    if (!isClient) {
+        return (
+            <div>
+                <div className="bg-[#f5f0e6] text-center p-2 font-semibold border-b border-gray-200">
+                    <a className="text-sm text-teal-900" href="#">
+                        Khuyến mại mùa hè đang diễn ra | Mua ngay
+                    </a>
+                </div>
+                <header className="bg-gray-100 py-2">
+                    <div className="container mx-auto flex font-semibold text-md justify-between items-center">
+                        <div className="flex space-x-4">
+                            <Link href={"/collections/shop-all"} className='text-gray-800'>Shop</Link>
+                            <a className="text-red-500" href="#">Giảm Giá</a>
+                            <a className="text-gray-800" href="#">Về Chúng Tôi</a>
+                        </div>
+                        <div className='text-emerald-900 text-3xl font-serif ml-20'>
+                            <Link href={"/"}>
+                                <Image
+                                    src={MocNgheLogo}
+                                    alt="Mộc Nghệ Logo"
+                                    width={60}
+                                    height={60}
+                                    priority
+                                    className='rounded-full'
+                                />
+                            </Link>
+                        </div>
+                        <div className="flex items-center text-gray-800 space-x-4">
+                            <Link href={"/collections/shop-all"} className='text-gray-800'>Cửa Hàng</Link>
+                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 3D</Link>
+                            <Search className='text-gray-800' />
+                            <ShoppingBag />
+                            <User className='text-gray-800' />
+                        </div>
+                    </div>
+                </header>
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className="bg-[#f5f0e6] text-center p-2 font-semibold border-b border-gray-200">
@@ -41,33 +91,31 @@ export default function NavBar() {
                 <div className="container mx-auto flex font-semibold text-md justify-between items-center">
                     <div className="flex space-x-4">
                         <Link href={"/collections/shop-all"} className='text-gray-800'>Shop</Link>
-
                         <a className="text-red-500" href="#">
                             Giảm Giá
                         </a>
                         <a className="text-gray-800" href="#">
                             Về Chúng Tôi
                         </a>
-                      
                     </div>
                     <div className='text-emerald-900 text-3xl font-serif ml-20'>
-                        <Link href={"/"}> 
+                        <Link href={"/"}>
                             <Image
                                 src={MocNgheLogo}
                                 alt="Mộc Nghệ Logo"
                                 width={60}
                                 height={60}
                                 priority
-                                className='rounded-full' 
+                                className='rounded-full'
                             />
                         </Link>
                     </div>
                     <div className="flex items-center text-gray-800 space-x-4">
                         <Link href={"/collections/shop-all"} className='text-gray-800'>Cửa Hàng</Link>
                         <div className="relative">
-                           <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 3D</Link>
+                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 3D</Link>
                         </div>
-                       
+
                         <Search className='text-gray-800' />
                         <button
                             onClick={handleCartClick}
@@ -81,8 +129,8 @@ export default function NavBar() {
 
                         {!isLogin
                             ? <Link href={"/login"}><User className='text-gray-800' /></Link>
-                            : 
-                            <button onAbort={handleLogout}>
+                            :
+                            <button onClick={handleLogout}>
                                 <LogOut className='text-gray-800' />
                             </button>}
                     </div>
@@ -91,4 +139,3 @@ export default function NavBar() {
         </div>
     )
 }
-
