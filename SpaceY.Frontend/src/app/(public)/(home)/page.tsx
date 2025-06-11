@@ -5,6 +5,16 @@ import Link from 'next/link'
 import React from 'react'
 
 export default function Home() {
+  const now = new Date();
+
+  // Lấy ngày, tháng, năm
+  const day = now.getDate() + 3;
+  const month = now.getMonth() + 1; // Lưu ý: getMonth() trả về 0–11
+
+  const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}`;
+
+  console.log(formattedDate); // Ví dụ: "11/06/2025"
+
   return (
     <div>
 
@@ -16,7 +26,7 @@ export default function Home() {
                 Chỉ 72 giờ: Giảm giá tới 40% cho dòng sản phẩm Tranh Gỗ
               </h1>
               <p className="text-lg mb-4">
-                Chỉ trong ba ngày, giảm giá tới 40% cho tranh điêu khắc gỗ. Khuyến mãi kết thúc vào ngày 6 tháng 6.
+                Chỉ trong ba ngày, giảm giá tới 40% cho tranh điêu khắc gỗ. Khuyến mãi kết thúc vào ngày {formattedDate}.
               </p>
               <Link className='bg-lime-900 text-white font-medium px-4 py-2 rounded' href='/collections/category/1'>MUA NGAY</Link>
              

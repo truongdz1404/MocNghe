@@ -58,6 +58,19 @@ namespace SpaceY.Infrastructure.Service
         }
 
 
+        public async Task RemoveRefreshTokenAsync(string refreshToken)
+
+        {
+            var appUser = await _userRepository.FindUserByRefreshTokenAsync(refreshToken);
+            if (appUser == null)
+            {
+                Console.WriteLine("User not found");
+                return;
+            }
+            appUser.RefreshToken = "";
+            await _userManager.UpdateAsync(appUser);
+        }
+
         public async Task<TokenDTO> CreateAuthTokenAsync(string userName, int expDays = -1)
         {
             try

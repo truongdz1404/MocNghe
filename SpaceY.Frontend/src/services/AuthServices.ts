@@ -4,8 +4,14 @@ import { CreateUser } from "@/types/user";
 
 const SignIn = async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const response = await api.post('/auth/login', credentials);
+
+    if (response.data?.accessToken) {
+        localStorage.setItem('accessToken', response.data.accessToken);
+    }
+
     return response.data;
 };
+
 
 const SignUp = async (user: CreateUser) => {
     const response = await api.post('/auth/register', user);
