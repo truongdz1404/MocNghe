@@ -12,7 +12,6 @@ export default function NavBar() {
     const [isLogin, setIsLogin] = useState(false);
     const [isClient, setIsClient] = useState(false);
 
-    // Kiểm tra login status chỉ trên client
     useEffect(() => {
         setIsClient(true);
         const token = localStorage.getItem('jwtToken');
@@ -69,7 +68,7 @@ export default function NavBar() {
                         </div>
                         <div className="flex items-center text-gray-800 space-x-4">
                             <Link href={"/collections/shop-all"} className='text-gray-800'>Cửa Hàng</Link>
-                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 3D</Link>
+                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 2D</Link>
                             <Search className='text-gray-800' />
                             <ShoppingBag />
                             <User className='text-gray-800' />
@@ -113,7 +112,7 @@ export default function NavBar() {
                     <div className="flex items-center text-gray-800 space-x-4">
                         <Link href={"/collections/shop-all"} className='text-gray-800'>Cửa Hàng</Link>
                         <div className="relative">
-                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 3D</Link>
+                            <Link href={"#"} className='text-gray-800'>Trải Nghiệm 2D</Link>
                         </div>
 
                         <Search className='text-gray-800' />
