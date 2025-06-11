@@ -2,7 +2,7 @@
 import ProductList from "@/components/product/ProductList";
 import ProductServices from "@/services/ProductServices";
 import { ProductDto } from "@/types/product";
-import { Plus, Search, User, ShoppingCart, Minus, Star, Shield, Truck, RotateCcw } from "lucide-react";
+import { Plus, Minus, Star, Shield, Truck, RotateCcw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

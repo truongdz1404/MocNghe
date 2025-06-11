@@ -9,7 +9,7 @@ import {
     Spinner,
     Alert,
     IconButton
-} from "@material-tailwind/react"
+} from "@/components/ui/MaterialTailwind"
 
 
 import {
@@ -17,7 +17,7 @@ import {
     MenuHandler,
     MenuList,
     MenuItem,
-} from "@material-tailwind/react"
+} from "@/components/ui/MaterialTailwind"
 import {
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -295,11 +295,11 @@ export default function AllProduct({
                                         onClick={() => router.push('/collections')}
                                         className="border-b border-blue-gray-50"
                                     >
-                                            <Link href="/collections/shop-all" passHref>
-                                                <Typography variant="paragraph" className="font-medium" as="a">
-                                                    Tất cả sản phẩm
-                                                </Typography>
-                                            </Link>
+                                        <Link href="/collections/shop-all" passHref>
+                                            <Typography variant="paragraph" className="font-medium" as="a">
+                                                Tất cả sản phẩm
+                                            </Typography>
+                                        </Link>
 
                                     </MenuItem>
                                     {categories.map((category) => (

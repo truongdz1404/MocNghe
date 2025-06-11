@@ -1,5 +1,5 @@
 import { ProductDto } from '@/types/product';
-import { Button, Card, CardBody, CardFooter, Chip, Typography } from '@material-tailwind/react';
+import { Button, Card, CardBody, CardFooter, Chip, Typography } from '@/components/ui/MaterialTailwind';
 import { ShoppingCartIcon, StarIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -161,7 +161,7 @@ export default function ProductList({ products }: PageProps) {
                                 size="lg"
                                 fullWidth
                                 className="flex items-center justify-center gap-2"
-                                color={product.inStock ? "" : "gray"}
+                                // color={product.inStock ? "" : "gray"}
                                 disabled={!product.inStock}
                                 onClick={() => {
                                     console.log('Add to cart:', product.id);

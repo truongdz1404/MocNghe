@@ -9,7 +9,7 @@ import {
     CardHeader,
     Typography,
     IconButton,
-} from "@material-tailwind/react";
+} from "@/components/ui/MaterialTailwind";
 import { PencilIcon } from "@heroicons/react/24/solid";
 // import ImageLoHoa from "/assets/lohoa1.png"
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
@@ -53,7 +53,7 @@ export function OrderSection1() {
 
     return (
         <section className="container mx-auto py-20 px-8">
-            <Typography variant="h4">Chi tiết đơn hàng</Typography>
+            <Typography variant="h4" >Chi tiết đơn hàng</Typography>
             <Typography className="text-gray-600 font-normal">
                 Đơn hàng đã đặt vào <span className="font-bold"> 1 Tháng 4, 2025</span>
             </Typography>
@@ -111,7 +111,7 @@ export function OrderSection1() {
                                 >
                                     <div className="absolute md:pl-32 pl-6 md:-bottom-[4.5rem] -bottom-[3rem] w-max text-left">
                                         <Typography variant="h6" color="blue-gray">
-                                           Tài khoản
+                                            Tài khoản
                                         </Typography>
                                         <Typography className="font-normal text-gray-600 md:block hidden">
                                             10:00 PM  1 Tháng 4, 2025
@@ -156,7 +156,7 @@ export function OrderSection1() {
                                     key={title}
                                     className="space-y-10 flex flex-wrap justify-center md:justify-start items-start"
                                 >
-                                    <Image src={img} className="h-[140px] mr-3" alt={title}  width={140} height={140}/>
+                                    <Image src={img} className="h-[140px] mr-3" alt={title} width={140} height={140} />
                                     <div className="-translate-y-6 space-y-1 md:text-start text-center">
                                         <Typography variant="h6" color="blue-gray">
                                             {title}
@@ -196,7 +196,7 @@ export function OrderSection1() {
                             ))}
                             <div className="flex items-center justify-between border-t border-gray-300 pt-4">
                                 <Typography color="blue-gray" className="!font-semibold">
-                                   Tổng tiền
+                                    Tổng tiền
                                 </Typography>
                                 <Typography color="blue-gray" className="!font-semibold">
                                     1.785.000đ
@@ -208,7 +208,7 @@ export function OrderSection1() {
                         <CardBody className="p-4">
                             <div className="flex items-center justify-between">
                                 <Typography color="blue-gray" className="!font-semibold">
-                                   Địa chỉ giao hàng
+                                    Địa chỉ giao hàng
                                 </Typography>
                                 <IconButton
                                     size="sm"
@@ -255,7 +255,7 @@ export function OrderSection1() {
                                 </IconButton>
                             </div>
                             <Typography className="mt-4 text-gray-600 font-normal">
-                               Thanh toán khi nhận hàng
+                                Thanh toán khi nhận hàng
                             </Typography>
                         </CardBody>
                     </Card>
