@@ -24,8 +24,8 @@ export default function NavBar() {
     const handleLogout = async () => {
         try {
             await AuthServices.Logout();
-            localStorage.removeItem('jwtToken'); // hoặc tên token bạn đang dùng
-            router.push('/login'); // hoặc chuyển hướng về trang chủ
+            localStorage.removeItem('jwtToken'); 
+            router.push('/login'); 
         } catch (error) {
             console.error('Lỗi khi đăng xuất:', error);
         }
