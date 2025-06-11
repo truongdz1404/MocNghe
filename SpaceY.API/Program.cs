@@ -50,12 +50,7 @@ builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 var jwtConfig = jwtSection.Get<JwtConfig>()
     ?? throw new Exception("Jwt options have not been set!");
-var configuration = builder.Configuration
-    .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
-    .AddEnvironmentVariables()
-    .Build();
+var configuration = builder.Configuration;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
