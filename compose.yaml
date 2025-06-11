@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: SpaceY.API/Dockerfile
     environment: 
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__DbConnection=Host=ep-black-king-a8bur9b8-pooler.eastus2.azure.neon.tech;Database=mocnghe;Username=mocnghe_owner;Password=npg_S0YelPpr7tNH;SSL Mode=Require;Trust Server Certificate=true
     ports:
