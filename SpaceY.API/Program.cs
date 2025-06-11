@@ -80,18 +80,38 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddAutoMapper(typeof(ApplicationDbContext).Assembly);
 
+// Enhanced CORS configuration with null checking
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
+if (corsOrigins == null || corsOrigins.Length == 0)
+{
+    throw new InvalidOperationException("CORS AllowedOrigins configuration is missing or empty.");
+}
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins(corsOrigins!)
-        .AllowCredentials()
-        .AllowAnyHeader()
-        .AllowAnyMethod();
+        policy.WithOrigins(corsOrigins)
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
+// Also consider adding a more permissive policy for development
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("DevCorsPolicy", policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
+}
 
 
 builder.Services
