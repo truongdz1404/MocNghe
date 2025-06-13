@@ -10,13 +10,17 @@ import {
 } from "@/components/ui/MaterialTailwind";
 import cartServices, { CartSummary, CartItem } from '@/services/CartServices';
 import Image from 'next/image';
+import { Truck } from 'lucide-react';
 
+
+
+const SHIP_COST = 30000;
+const SHIP_COST_FREE = 300000;
 const ViewCart: React.FC = () => {
     const [cartData, setCartData] = useState<CartSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [updatingItems, setUpdatingItems] = useState<Set<number>>(new Set());
-
     useEffect(() => {
         fetchCart();
     }, []);
@@ -51,7 +55,7 @@ const ViewCart: React.FC = () => {
             });
 
             if (response.success) {
-                await fetchCart(); // Refresh cart data
+                await fetchCart();
             } else {
                 setError(response.message);
             }
@@ -89,24 +93,31 @@ const ViewCart: React.FC = () => {
             });
         }
     };
-
-    const clearCart = async () => {
-        try {
-            setLoading(true);
-            const response = await cartServices.clearCart();
-
-            if (response.success) {
-                await fetchCart();
-            } else {
-                setError(response.message);
-            }
-        } catch (err) {
-            setError('Failed to clear cart');
-            console.error('Error clearing cart:', err);
-        } finally {
-            setLoading(false);
+    const calculateShipCost = () => {
+        if (!cartData) {
+            return 0;
         }
-    };
+        cartData.totalAmount = cartData.subTotal > SHIP_COST_FREE ? cartData.subTotal : cartData.subTotal + SHIP_COST;
+        return cartData.subTotal > SHIP_COST_FREE ? 0 : SHIP_COST;
+      };
+
+    // const clearCart = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await cartServices.clearCart();
+
+    //         if (response.success) {
+    //             await fetchCart();
+    //         } else {
+    //             setError(response.message);
+    //         }
+    //     } catch (err) {
+    //         setError('Failed to clear cart');
+    //         console.error('Error clearing cart:', err);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('vi-VN', {
@@ -161,17 +172,17 @@ const ViewCart: React.FC = () => {
             <Card className="mb-6">
                 <CardHeader floated={false} shadow={false} className="rounded-none">
                     <div className="flex items-center justify-between">
-                        <Typography variant="h4" color="blue-gray">
+                        <Typography variant="h4" color="blue-gray" className='mb-4'>
                             Giỏ Hàng ({cartData.totalItems} sản phẩm)
                         </Typography>
-                        <Button
+                        {/* <Button
                             variant="text"
                             color="red"
                             onClick={clearCart}
                             disabled={loading}
                         >
                             Xoá giỏ hàng
-                        </Button>
+                        </Button> */}
                     </div>
                 </CardHeader>
             </Card>
@@ -231,7 +242,7 @@ const ViewCart: React.FC = () => {
                                                 </Typography>
                                             ) : (
                                                 <Typography variant="small" color="red">
-                                                   Hết Hàng
+                                                    Hết Hàng
                                                 </Typography>
                                             )}
                                         </div>
@@ -306,7 +317,8 @@ const ViewCart: React.FC = () => {
 
                                 <div className="flex justify-between">
                                     <Typography color="gray">Shipping:</Typography>
-                                    <Typography color="gray">0đ</Typography>
+                                    <Typography color="gray">
+                                        {formatCurrency(calculateShipCost())}</Typography>
                                 </div>
 
                                 <hr className="my-3" />
@@ -349,7 +361,14 @@ const ViewCart: React.FC = () => {
                             </div>
                         </CardBody>
                     </Card>
+                    <Card className='items-center py-2'>
+                        <Typography variant="h6" color="blue-gray" className='flex gap-2'>
+                            <Truck className="w-5 h-5 text-green-600" />
+                            <p>Free ship cho đơn hàng từ 250.000đ</p>
+                        </Typography>
+                    </Card>
                 </div>
+               
             </div>
         </div>
     );

@@ -66,8 +66,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     {
         options.Password.RequiredLength = 8;
         options.Password.RequireUppercase = true;
-            options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = false;
 
         options.User.RequireUniqueEmail = true;
         options.SignIn.RequireConfirmedEmail = false;
@@ -80,7 +80,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddAutoMapper(typeof(ApplicationDbContext).Assembly);
 
-// Enhanced CORS configuration with null checking
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 
 if (corsOrigins == null || corsOrigins.Length == 0)
@@ -90,29 +89,15 @@ if (corsOrigins == null || corsOrigins.Length == 0)
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy.WithOrigins(corsOrigins)
             .AllowCredentials()
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod() 
+            .SetPreflightMaxAge(TimeSpan.FromSeconds(3600)); 
     });
 });
-
-// Also consider adding a more permissive policy for development
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("DevCorsPolicy", policy =>
-        {
-            policy.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
-    });
-}
-
 
 builder.Services
     .AddAuthentication(options =>
@@ -151,23 +136,20 @@ builder.Services.RegisterService();
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
-    await app.InitialiseDatabaseAsync();
+    // await app.InitialiseDatabaseAsync();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.MapGet("/", () => "SpaceY API is running!");
 
+app.UseCors("CorsPolicy");
 app.UseRouting();
 app.UseHttpsRedirection();
-app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-

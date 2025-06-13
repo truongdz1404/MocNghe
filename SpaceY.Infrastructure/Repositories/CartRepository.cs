@@ -24,7 +24,7 @@ namespace SpaceY.Infrastructure.Repositories
                 .Where(ci => ci.UserId == userId)
                 .Include(ci => ci.ProductVariant)
                     .ThenInclude(pv => pv.Product)
-                        .ThenInclude(p => p.Images) 
+                        .ThenInclude(p => p.Images!)
                 .Include(ci => ci.ProductVariant)
                     .ThenInclude(pv => pv.Color)
                 .Include(ci => ci.ProductVariant)
