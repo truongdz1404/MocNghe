@@ -9,26 +9,27 @@ using SpaceY.Infrastructure.Data;
 
 namespace SpaceY.Infrastructure.Repositories
 {
-    public class CategoryRepository(ApplicationDbContext dbContext)
-     : BaseRepository<Category>(dbContext), ICategoryRepository
+    public class CategoryRepository
+     : BaseRepository<Category>, ICategoryRepository
     {
+        public CategoryRepository(ApplicationDbContext _dbContext) : base(_dbContext) { }
         public async Task<IEnumerable<Category>> GetVisibleAsync()
         {
-            return await dbContext.Set<Category>()
+            return await _dbContext.Set<Category>()
                 .Where(c => c.Visible && !c.Deleted)
                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Category>> GetActiveAsync()
         {
-            return await dbContext.Set<Category>()
+            return await _dbContext.Set<Category>()
                 .Where(c => !c.Deleted)
                 .ToListAsync();
         }
 
         public async Task<bool> IsNameExistsAsync(string name, long? excludeId = null)
         {
-            var query = dbContext.Set<Category>()
+            var query = _dbContext.Set<Category>()
                 .Where(c => c.Name.ToLower() == name.ToLower() && !c.Deleted);
 
             if (excludeId.HasValue)
@@ -39,7 +40,7 @@ namespace SpaceY.Infrastructure.Repositories
 
         public async Task<bool> IsUrlExistsAsync(string url, long? excludeId = null)
         {
-            var query = dbContext.Set<Category>()
+            var query = _dbContext.Set<Category>()
                 .Where(c => c.Url.ToLower() == url.ToLower() && !c.Deleted);
 
             if (excludeId.HasValue)
@@ -50,7 +51,7 @@ namespace SpaceY.Infrastructure.Repositories
 
         public async Task<IEnumerable<Category>> GetByIdsAsync(IEnumerable<long> ids)
         {
-            var list = await dbContext.Set<Category>()
+            var list = await _dbContext.Set<Category>()
                 .Where(c => ids.Contains(c.Id) && !c.Deleted)
                 .ToListAsync();
             return list;
@@ -58,7 +59,7 @@ namespace SpaceY.Infrastructure.Repositories
 
         public async Task<IEnumerable<Category>> GetCategoryRoomAsync()
         {
-            return await dbContext.Set<Category>()
+            return await _dbContext.Set<Category>()
       .Where(c => EF.Functions.Like(c.Name, "%Phòng%") && !c.Deleted)
       .ToListAsync();
 
