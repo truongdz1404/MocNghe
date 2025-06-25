@@ -26,6 +26,7 @@ public static class ServiceExtension
         services.AddScoped<IColorService, ColorService>();
         services.AddScoped<ISizeService, SizeService>();
         services.AddScoped<IReviewsService, ReviewsService>();
+        services.AddScoped<IBlogService, BlogService>();
         #endregion
 
         #region Repositories
@@ -37,6 +38,7 @@ public static class ServiceExtension
         services.AddScoped<ISizeRepository, SizeRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<IReviewsRepository, ReviewsRepository>();
+        services.AddScoped<IBlogRepository, BlogRepository>();
         #endregion
 
 

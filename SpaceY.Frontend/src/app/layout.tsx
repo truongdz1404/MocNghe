@@ -3,10 +3,10 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import { MaterialTailwindProvider } from "@/components/MaterialTailwindProvider";
 const inter = Inter({ subsets: ['vietnamese'] });
-
 export const metadata: Metadata = {
   title: "Moc Nghe Decor",
   description: "Không gian sống hiện đại",
+  icons: "/assets/logo1.png",
 };
 
 export default function RootLayout({

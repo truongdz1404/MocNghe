@@ -41,6 +41,7 @@ export interface ProductDto {
     availableColors: ColorDto[];
     availableSizes: SizeDto[];
     priceRange: string;
+    image2DUrl?: string;
 }
 
 export interface CreateProductDto {

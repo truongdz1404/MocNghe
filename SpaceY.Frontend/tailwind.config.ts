@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import withMT from "@material-tailwind/react/utils/withMT";
 import tailwindcssAnimate from "tailwindcss-animate";
-
+import typography from "@tailwindcss/typography";
 const baseConfig: Config = {
 	darkMode: ["class"],
 	content: [
@@ -63,7 +63,7 @@ const baseConfig: Config = {
 			}
 		}
 	},
-	plugins: [tailwindcssAnimate],
+	plugins: [tailwindcssAnimate, typography],
 };
 
 export default withMT(baseConfig);

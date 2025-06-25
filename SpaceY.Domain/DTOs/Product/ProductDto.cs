@@ -16,6 +16,7 @@ namespace SpaceY.Domain.DTOs.Product
         public string Description { get; set; } = string.Empty;
         public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
         // public List<string> CategoryNames { get; set; } = new List<string>();
+        public string Image2DUrl { get; set; } = string.Empty;
         public bool Featured { get; set; }
         public bool Visible { get; set; }
         public bool Deleted { get; set; }
