@@ -317,6 +317,7 @@ namespace SpaceY.Infrastructure.Services
                 Deleted = product.Deleted,
                 CreatedAt = product.CreatedAt,
                 ModifiedAt = product.ModifiedAt,
+                Image2DUrl = product.Image2DUrl,
 
                 Images = product.Images?.Where(i => !i.Deleted).Select(i => new ImageDto
                 {

@@ -112,7 +112,7 @@ export default function NavBar() {
                     <div className="flex items-center text-gray-800 space-x-4">
                         <Link href={"/collections/shop-all"} className='text-gray-800'>Cửa Hàng</Link>
                         <div className="relative">
-                            <Link href={"#"} className='text-gray-800'>Trải Nghiệm 2D</Link>
+                            <Link href={"/workspace"} className='text-gray-800'>Trải Nghiệm 2D</Link>
                         </div>
 
                         <Search className='text-gray-800' />

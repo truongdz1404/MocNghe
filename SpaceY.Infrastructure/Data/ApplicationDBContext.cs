@@ -200,5 +200,7 @@ namespace SpaceY.Infrastructure.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Reviews> Reviews { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+
     }
 }
