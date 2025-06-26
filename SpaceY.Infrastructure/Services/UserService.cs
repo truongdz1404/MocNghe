@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using SpaceY.Application.Services;
 using SpaceY.Domain.DTOs;
+using SpaceY.Domain.DTOs.User;
 using SpaceY.Domain.Entities;
 using SpaceY.Domain.Interfaces.IRepositories;
 
@@ -99,6 +100,18 @@ namespace SpaceY.Infrastructure.Service
         public Task<string?> GetRefreshTokenAsync(string userName)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<UserDTO> GetUserByEmailAsync(string email)
+        {
+            var user = await _userRepository.FindUserByEmailAsync(email);
+            if (user == null)
+                throw new Exception($"User with email '{email}' not found.");
+            return new UserDTO
+            {
+                Email = user.Email!,
+                Avatar = user.AvatarUrl ?? "",
+             };
         }
     }
 }

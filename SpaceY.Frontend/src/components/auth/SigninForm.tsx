@@ -79,9 +79,9 @@ export default function SignInPage() {
 
       console.log("Đăng nhập thành công:", response);
 
-      if (response.token) {
-        localStorage.setItem('token', response.token);
-      }
+      // if (response.token) {
+      //   localStorage.setItem('token', response.token);
+      // }
 
       router.push('/');
 

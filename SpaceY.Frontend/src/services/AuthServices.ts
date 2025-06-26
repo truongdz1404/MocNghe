@@ -1,17 +1,12 @@
+// services/auth.ts
 import api from "@/services/api";
+import { LoginCredentials, LoginResponse } from "@/types/auth";
 import { CreateUser } from "@/types/user";
-
 
 const SignIn = async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const response = await api.post('/auth/login', credentials);
-
-    if (response.data?.accessToken) {
-        localStorage.setItem('accessToken', response.data.accessToken);
-    }
-
     return response.data;
 };
-
 
 const SignUp = async (user: CreateUser) => {
     const response = await api.post('/auth/register', user);
@@ -20,11 +15,17 @@ const SignUp = async (user: CreateUser) => {
 
 const Logout = async () => {
     const response = await api.post('/auth/logout');
+    // Cookies sẽ được clear bởi backend
     return response.data;
 };
 
 const RefreshToken = async () => {
-    const response = await api.post('/auth/refresh');
+    const response = await api.post('/auth/refresh-token');
+    return response.data;
+};
+
+const GetCurrentUser = async () => {
+    const response = await api.get('/auth/me');
     return response.data;
 };
 
@@ -33,6 +34,7 @@ const AuthServices = {
     SignUp,
     Logout,
     RefreshToken,
+    GetCurrentUser,
 }
 
 export default AuthServices;
