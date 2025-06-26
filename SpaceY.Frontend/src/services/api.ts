@@ -1,3 +1,4 @@
+// services/api.ts
 import envConfig from "@/config";
 import axios from "axios";
 
@@ -5,26 +6,11 @@ const api = axios.create({
     baseURL: envConfig.NEXT_PUBLIC_API_ENDPOINT,
     headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
     },
-    withCredentials: true
+    withCredentials: true // Quan trọng: để gửi cookies
 });
 
-api.interceptors.request.use(
-    (config) => {
-        if (typeof window !== 'undefined') {
-            const token = localStorage.getItem('token');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
+// Bỏ interceptor request vì không cần thêm token manual
 api.interceptors.response.use(
     (response) => {
         return response;
@@ -36,20 +22,17 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-               
+                // Refresh token sẽ tự động dùng cookies
                 const refreshResponse = await api.post('/auth/refresh-token');
-                const newToken = refreshResponse.data.token;
 
-                if (newToken && typeof window !== 'undefined') {
-                    localStorage.setItem('token', newToken);
-                    originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                if (refreshResponse.status === 200) {
                     return api(originalRequest);
                 }
             } catch (refreshError) {
-                if (typeof window !== 'undefined') {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                }
+                // Redirect to login
+                // if (typeof window !== 'undefined') {
+                //     window.location.href = '/login';
+                // }
                 return Promise.reject(refreshError);
             }
         }

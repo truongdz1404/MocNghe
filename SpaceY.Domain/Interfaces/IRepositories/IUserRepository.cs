@@ -9,5 +9,7 @@ namespace SpaceY.Domain.Interfaces.IRepositories
     public interface IUserRepository
     {
         public Task<ApplicationUser?> FindUserByRefreshTokenAsync(string refreshToken);
+        public Task<ApplicationUser?> FindUserByEmailAsync(string email);
+        public Task<ApplicationUser?> FindUserByNameAsync(string name);
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using SpaceY.Application.Auth.Queries;
 using SpaceY.Application.Services;
 using SpaceY.Domain.DTOs.Auth;
 using SpaceY.Domain.Entities;
@@ -46,7 +45,7 @@ namespace SpaceY.Infrastructure.Services
         }
 
 
-        public async Task<bool> SignInUserAsync(Login loginDTO)
+        public async Task<bool> SignInUserAsync(LoginDto loginDTO)
         {
             try
             {

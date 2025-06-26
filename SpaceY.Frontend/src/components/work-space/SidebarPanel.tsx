@@ -125,7 +125,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
                         <Tab value="ai-chat" onClick={() => setActiveTab("ai-chat")}>
                             <div className="flex items-center gap-1">
                                 <MessageCircle className="w-4 h-4" />
-                                <p className="font-bold">Hỏi đáp AI</p>
+                                <p className="font-bold">Trợ lý AI</p>
                             </div>
                         </Tab>
                     </TabsHeader>

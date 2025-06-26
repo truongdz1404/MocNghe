@@ -31,7 +31,7 @@ const EnhancedImageEditor: React.FC = () => {
         const dragData = {
             id: item.id,
             type: 'image',
-            imageUrl: item.images[0].url,
+            imageUrl: item.image2DUrl,
         };
         e.dataTransfer.setData('application/json', JSON.stringify(dragData));
     };

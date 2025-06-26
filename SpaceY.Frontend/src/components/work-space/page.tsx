@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useRef, useCallback } from 'react';
-import { Upload, Image, Type, Square, Circle, Star, Move, RotateCcw, Trash2 } from 'lucide-react';
+import { Upload, Type, Square, Circle, Star, Move, RotateCcw, Trash2, ImageIcon } from 'lucide-react';
 import { ArrowsPointingOutIcon } from '@heroicons/react/24/outline';
 
 // Simulate react-draggable và interact.js functionality
@@ -457,7 +457,7 @@ const EnhancedImageEditor: React.FC = () => {
                                             text-white py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 
                                             flex items-center justify-center gap-2 shadow-lg"
                             >
-                                <Image className="w-4 h-4" />
+                                <ImageIcon className="w-4 h-4" />
                                 Chọn ảnh
                             </button>
                         </div>
@@ -660,7 +660,7 @@ const EnhancedImageEditor: React.FC = () => {
                                 {!uploadedImage && (
                                     <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                                         <div className="text-center">
-                                            <Image className="w-20 h-20 mx-auto mb-4 opacity-50" />
+                                            <ImageIcon className="w-20 h-20 mx-auto mb-4 opacity-50" />
                                             <p className="text-xl font-medium">Tải ảnh lên và bắt đầu sáng tạo</p>
                                             <p className="text-sm mt-2">Cuộn chuột để zoom, kéo items để tạo</p>
                                         </div>

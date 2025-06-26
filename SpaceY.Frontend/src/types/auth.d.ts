@@ -1,9 +1,22 @@
-interface LoginCredentials {
+// types/auth.ts
+export interface LoginCredentials {
     email: string;
     password: string;
 }
 
-interface LoginResponse {
-    token?: string;
-    message?: string;
+export interface LoginResponse {
+    status: string;
+    data: {
+        accessToken: string;
+        refreshToken: string;
+        user: User;
+    };
+    message: string;
+}
+
+export interface User {
+    email: string;
+    avata: string;
+    username: string;
+    // ... other user properties
 }
