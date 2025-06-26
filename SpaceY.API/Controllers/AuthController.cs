@@ -5,10 +5,11 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using SpaceY.Application.Auth.Queries;
+using SpaceY.Application.DTOs;
 using SpaceY.Application.Services;
 using SpaceY.Domain.Configs;
 using SpaceY.Domain.DTOs;
@@ -28,7 +29,6 @@ namespace SpaceY.API.Controllers
         private readonly IIdentityService _identityService;
         private readonly IMediator _mediator;
 
-
         public AuthController(IOptions<JwtConfig> jwtConfig,
          IUserService userService,
           IIdentityService identityService,
@@ -41,21 +41,31 @@ namespace SpaceY.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Authenticate([FromBody] Login loginDTO)
+        public async Task<IActionResult> Authenticate([FromBody] LoginDto loginDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             try
             {
                 var isValid = await _identityService.SignInUserAsync(loginDTO);
                 if (!isValid) throw new Exception("Sai tên đăng nhập hoặc mật khẩu");
+
                 var tokenDTO = await _userService
                     .CreateAuthTokenAsync(EmailHelper.GetUserName(loginDTO.Email), _jwtConfig.RefreshTokenValidityInDays);
+
                 SetTokensInsideCookie(tokenDTO, HttpContext);
+
+                // Get user info to return in response
+                var user = await _userService.GetUserByEmailAsync(loginDTO.Email);
 
                 return Ok(new Response
                 {
                     Status = ResponseStatus.SUCCESS,
-                    Data = tokenDTO,
+                    Data = new LoginResponseDto
+                    {
+                        AccessToken = tokenDTO.AccessToken,
+                        RefreshToken = tokenDTO.RefreshToken,
+                        User = user
+                    },
                     Message = "Login successfully"
                 });
             }
@@ -69,17 +79,19 @@ namespace SpaceY.API.Controllers
             }
         }
 
-
         [HttpPost("logout")]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             try
             {
-                var userName = (HttpContext.User?.Identity?.Name) ?? throw new Exception("User is not authenticated!");
+                var userName = HttpContext.User?.Identity?.Name ?? throw new Exception("User is not authenticated!");
                 var refreshToken = await _userService.GetRefreshTokenAsync(userName) ?? throw new Exception("Not found refresh token!");
+
                 await _userService.RemoveRefreshTokenAsync(refreshToken);
                 RemoveTokensInsideCookie(HttpContext);
                 await HttpContext.SignOutAsync();
+
                 return Ok(new Response
                 {
                     Status = ResponseStatus.SUCCESS,
@@ -96,77 +108,60 @@ namespace SpaceY.API.Controllers
             }
         }
 
-        [HttpGet("refresh-token")]
+        [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken()
         {
             try
             {
-                var refeshToken = GetTokenInsideCookie(_jwtConfig.RefreshTokenKey, HttpContext);
-                var tokenDTO = await _userService.RefeshAuthTokenAsync(refeshToken);
+                var refreshToken = GetTokenInsideCookie(_jwtConfig.RefreshTokenKey, HttpContext);
+                var tokenDTO = await _userService.RefeshAuthTokenAsync(refreshToken);
                 SetTokensInsideCookie(tokenDTO, HttpContext);
-                return Ok(
-                    new Response
-                    {
-                        Status = ResponseStatus.SUCCESS,
-                        Message = "Refresh Token Successfully!",
-                    }
-                );
+
+                return Ok(new Response
+                {
+                    Status = ResponseStatus.SUCCESS,
+                    Message = "Refresh Token Successfully!",
+                    Data = tokenDTO
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(
-                    new Response { Status = ResponseStatus.ERROR, Message = ex.Message }
-                );
+                return BadRequest(new Response
+                {
+                    Status = ResponseStatus.ERROR,
+                    Message = ex.Message
+                });
             }
         }
 
-        private static string GetTokenInsideCookie(string tokenKey, HttpContext context)
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser()
         {
-            context.Request.Cookies.TryGetValue(tokenKey, out var refreshToken);
-            if (refreshToken is null)
-                throw new Exception("Not found refresh token!");
-            return refreshToken;
-        }
+            try
+            {
+                var userName = HttpContext.User?.Identity?.Name ?? throw new Exception("User is not authenticated!");
+                var user = await _userService.GetUserByNameAsync(userName);
 
-        private void SetTokensInsideCookie(TokenDTO tokenDTO, HttpContext context)
-        {
-            context.Response.Cookies.Append(
-                _jwtConfig.AccessTokenKey,
-                tokenDTO.AccessToken,
-                new CookieOptions
+                if (user == null)
+                    throw new Exception("User not found!");
+
+                return Ok(new Response
                 {
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtConfig.TokenValidityInMinutes),
-                    HttpOnly = true,
-                    IsEssential = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                }
-            );
-            const string refreshTokenPath = "/api/auth/refresh-token";
-            context.Response.Cookies.Append(
-                _jwtConfig.RefreshTokenKey,
-                tokenDTO.RefreshToken,
-                new CookieOptions
+                    Status = ResponseStatus.SUCCESS,
+                    Data = user,
+                    Message = "Get current user successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new Response
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(_jwtConfig.RefreshTokenValidityInDays),
-                    HttpOnly = true,
-                    IsEssential = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    Path = refreshTokenPath,
-                }
-            );
+                    Status = ResponseStatus.ERROR,
+                    Message = ex.Message
+                });
+            }
         }
-
-        private void RemoveTokensInsideCookie(HttpContext context)
-        {
-            context.Response.Cookies.Append(
-                _jwtConfig.AccessTokenKey,
-                "",
-                new CookieOptions { HttpOnly = false, Expires = DateTimeOffset.UtcNow.AddDays(-1) }
-            );
-        }
-
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
@@ -193,13 +188,23 @@ namespace SpaceY.API.Controllers
                         Data = result.Errors.Select(e => e.Description)
                     });
                 }
+
                 var token = await _userService.CreateAuthTokenAsync(EmailHelper.GetUserName(registerDTO.Email), _jwtConfig.RefreshTokenValidityInDays);
-                SetTokenInsideCookie(token, HttpContext);
+                SetTokensInsideCookie(token, HttpContext);
+
+                // Get user info to return in response
+                var user = await _userService.GetUserByEmailAsync(registerDTO.Email);
 
                 return Ok(new Response
                 {
                     Status = ResponseStatus.SUCCESS,
                     Message = "Registration successful",
+                    Data = new LoginResponseDto
+                    {
+                        AccessToken = token.AccessToken,
+                        RefreshToken = token.RefreshToken,
+                        User = user
+                    }
                 });
             }
             catch (Exception ex)
@@ -213,32 +218,45 @@ namespace SpaceY.API.Controllers
             }
         }
 
+        private static string GetTokenInsideCookie(string tokenKey, HttpContext context)
+        {
+            context.Request.Cookies.TryGetValue(tokenKey, out var refreshToken);
+            if (refreshToken is null)
+                throw new Exception("Not found refresh token!");
+            return refreshToken;
+        }
 
-
-        private void SetTokenInsideCookie(TokenDTO tokenDTO, HttpContext context)
+        private void SetTokensInsideCookie(TokenDTO tokenDTO, HttpContext context)
         {
             try
             {
-                context.Response.Cookies.Append(_jwtConfig.AccessTokenKey, tokenDTO.AccessToken,
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtConfig.TokenValidityInMinutes),
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                });
+                context.Response.Cookies.Append(
+                    _jwtConfig.AccessTokenKey,
+                    tokenDTO.AccessToken,
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtConfig.TokenValidityInMinutes),
+                        HttpOnly = true,
+                        IsEssential = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                    }
+                );
 
                 const string refreshTokenPath = "/api/auth/refresh-token";
-                context.Response.Cookies.Append(_jwtConfig.RefreshTokenKey, tokenDTO.RefreshToken,
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(_jwtConfig.RefreshTokenValidityInDays),
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    IsEssential = true,
-                    Path = refreshTokenPath
-                });
+                context.Response.Cookies.Append(
+                    _jwtConfig.RefreshTokenKey,
+                    tokenDTO.RefreshToken,
+                    new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(_jwtConfig.RefreshTokenValidityInDays),
+                        HttpOnly = true,
+                        IsEssential = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Strict,
+                        Path = refreshTokenPath,
+                    }
+                );
             }
             catch (Exception ex)
             {
@@ -246,15 +264,32 @@ namespace SpaceY.API.Controllers
             }
         }
 
-
-        private void RemoveTokenInsideCookie(HttpContext context)
+        private void RemoveTokensInsideCookie(HttpContext context)
         {
-            context.Response.Cookies.Append(_jwtConfig.AccessTokenKey, "",
-            new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(-1),
-                HttpOnly = false
-            });
+            context.Response.Cookies.Append(
+                _jwtConfig.AccessTokenKey,
+                "",
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                }
+            );
+
+            context.Response.Cookies.Append(
+                _jwtConfig.RefreshTokenKey,
+                "",
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Path = "/api/auth/refresh-token"
+                }
+            );
         }
     }
 }

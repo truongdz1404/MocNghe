@@ -13,6 +13,7 @@ namespace SpaceY.Application.Services
         Task<TokenDTO> RefeshAuthTokenAsync(string refeshToken);
         Task<string?> GetRefreshTokenAsync(string userName);
         Task<UserDTO> GetUserByEmailAsync(string email);
+        Task<UserDTO> GetUserByNameAsync(string name);
         Task RemoveRefreshTokenAsync(string refreshToken);
 
     }

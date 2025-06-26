@@ -7,8 +7,9 @@ export interface LoginCredentials {
 export interface LoginResponse {
     status: string;
     data: {
-        user: User; // User info thay vì token
-        isAuthenticated: boolean;
+        accessToken: string;
+        refreshToken: string;
+        user: User;
     };
     message: string;
 }
@@ -16,5 +17,6 @@ export interface LoginResponse {
 export interface User {
     email: string;
     avata: string;
+    username: string;
     // ... other user properties
 }

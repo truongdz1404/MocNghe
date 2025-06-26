@@ -30,9 +30,9 @@ api.interceptors.response.use(
                 }
             } catch (refreshError) {
                 // Redirect to login
-                if (typeof window !== 'undefined') {
-                    window.location.href = '/login';
-                }
+                // if (typeof window !== 'undefined') {
+                //     window.location.href = '/login';
+                // }
                 return Promise.reject(refreshError);
             }
         }

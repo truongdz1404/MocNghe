@@ -110,6 +110,19 @@ namespace SpaceY.Infrastructure.Service
             return new UserDTO
             {
                 Email = user.Email!,
+                UserName = user.UserName!,
+                Avatar = user.AvatarUrl ?? "",
+             };
+        }
+        public async Task<UserDTO> GetUserByNameAsync(string name)
+        {
+            var user = await _userRepository.FindUserByNameAsync(name);
+            if (user == null)
+                throw new Exception($"User with email '{name}' not found.");
+            return new UserDTO
+            {
+                Email = user.Email!,
+                UserName = user.UserName!,
                 Avatar = user.AvatarUrl ?? "",
              };
         }

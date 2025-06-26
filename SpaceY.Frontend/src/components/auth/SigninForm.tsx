@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import {
@@ -11,7 +11,8 @@ import {
   Button,
   Alert
 } from "@/components/ui/MaterialTailwind";
-import AuthServices from "@/services/AuthServices";
+// import AuthServices from "@/services/AuthServices";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Google Icon Component
 const GoogleIcon = () => (
@@ -54,7 +55,16 @@ export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
   const router = useRouter();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated, authLoading, router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -62,6 +72,11 @@ export default function SignInPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+
+    // Clear error when user starts typing
+    if (error) {
+      setError("");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,18 +86,27 @@ export default function SignInPage() {
 
     try {
       const loginData = {
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password
       };
 
-      const response = await AuthServices.SignIn(loginData);
+      // Validate input
+      if (!loginData.email || !loginData.password) {
+        throw new Error("Vui lòng nhập đầy đủ email và mật khẩu");
+      }
 
-      console.log("Đăng nhập thành công:", response);
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(loginData.email)) {
+        throw new Error("Email không hợp lệ");
+      }
 
-      // if (response.token) {
-      //   localStorage.setItem('token', response.token);
-      // }
+      // Use AuthContext login method
+      await login(loginData);
 
+      console.log("Đăng nhập thành công");
+
+      // Redirect will be handled by AuthContext or useEffect above
       router.push('/');
 
     } catch (error: unknown) {
@@ -103,6 +127,19 @@ export default function SignInPage() {
     }
   };
 
+  // Show loading while checking authentication
+  // if (authLoading) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  //     </div>
+  //   );
+  // }
+
+  // Don't render if already authenticated (will redirect)
+  if (isAuthenticated) {
+    return null;
+  }
   return (
     <div className="space-y-6">
       {/* Header */}

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import { MaterialTailwindProvider } from "@/components/MaterialTailwindProvider";
-// import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 const inter = Inter({ subsets: ['vietnamese'] });
 export const metadata: Metadata = {
   title: "Mộc Nghệ Decor",
@@ -18,11 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-[#f5f0e6]`}>
-        {/* <AuthProvider> */}
+        <AuthProvider>
           <MaterialTailwindProvider>
             {children}
           </MaterialTailwindProvider>
-        {/* </AuthProvider> */}
+        </AuthProvider>
 
       </body>
     </html>

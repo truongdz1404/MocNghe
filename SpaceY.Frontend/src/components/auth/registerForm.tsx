@@ -50,13 +50,20 @@ const FacebookIcon = () => (
 
 // Zod schema for registration
 const RegisterSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-  confirmPassword: z.string(),
+  email: z.string().min(1, "Email là bắt buộc").email("Email không hợp lệ"),
+  password: z
+    .string()
+    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+    .regex(/[A-Z]/, "Mật khẩu phải chứa ít nhất một chữ hoa")
+    .regex(/[a-z]/, "Mật khẩu phải chứa ít nhất một chữ thường"),
+  confirmPassword: z
+    .string()
+    .min(1, "Vui lòng nhập lại mật khẩu"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Mật khẩu không khớp",
   path: ["confirmPassword"],
 });
+
 
 type RegisterFormType = z.infer<typeof RegisterSchema>;
 
@@ -90,8 +97,7 @@ export default function RegisterPage() {
       const data = await AuthServices.SignUp(user);
       console.log("Đăng ký thành công:", data);
 
-      if (data.token) {
-        localStorage.setItem('token', data.token);
+      if (data.status === "Success") {
         router.push('/');
       } else {
         router.push('/login');
@@ -119,168 +125,149 @@ export default function RegisterPage() {
           Tạo Tài Khoản Mới
         </Typography>
         <Typography variant="paragraph" color="gray" className="font-normal">
-         Nhập thông tin để tạo tài khoản
+          Nhập thông tin để tạo tài khoản
         </Typography>
       </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Input
-              type="email"
-              label="Email"
-              size="lg"
-              {...register("email")}
-              disabled={isLoading}
-              crossOrigin={undefined}
-              className="!border-blue-gray-200 focus:!border-blue-500"
-              labelProps={{
-                className:
-                  "text-blue-gray-600 peer-focus:text-blue-500 transition-all duration-300",
-              }}
-              containerProps={{
-                className: "min-w-[200px]",
-              }}
-              error={!!errors.email}
-            />
-            {errors.email && (
-              <Typography variant="small" color="red" className="mt-1 text-sm">
-                {errors.email.message}
-              </Typography>
-            )}
-          </div>
-
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              label="Mật khẩu"
-              size="lg"
-              {...register("password")}
-              disabled={isLoading}
-              crossOrigin={undefined}
-              className="!border-blue-gray-200 focus:!border-blue-500 pr-10"
-              labelProps={{
-                className:
-                  "text-blue-gray-600 peer-focus:text-blue-500 transition-all duration-300",
-              }}
-              containerProps={{
-                className: "min-w-[200px]",
-              }}
-              error={!!errors.password}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-gray-400 hover:text-blue-gray-600 focus:outline-none"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
-            </button>
-            {errors.password && (
-              <Typography variant="small" color="red" className="mt-1 text-sm">
-                {errors.password.message}
-              </Typography>
-            )}
-          </div>
-
-          <div className="relative">
-            <Input
-              type={showConfirmPassword ? "text" : "password"}
-              label="Nhập lại mật khẩu"
-              size="lg"
-              {...register("confirmPassword")}
-              disabled={isLoading}
-              crossOrigin={undefined}
-              className="!border-blue-gray-200 focus:!border-blue-500 pr-10"
-              labelProps={{
-                className:
-                  "text-blue-gray-600 peer-focus:text-blue-500 transition-all duration-300",
-              }}
-              containerProps={{
-                className: "min-w-[200px]",
-              }}
-              error={!!errors.confirmPassword}
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-gray-400 hover:text-blue-gray-600 focus:outline-none"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
-            </button>
-            {errors.confirmPassword && (
-              <Typography variant="small" color="red" className="mt-1 text-sm">
-                {errors.confirmPassword.message}
-              </Typography>
-            )}
-          </div>
-
-          {error && (
-            <Alert color="red" className="text-sm">
-              {error}
-            </Alert>
+      {/* Form */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <Input
+            name="email"
+            label="Email"
+            size="lg"
+            error={!!errors.email}
+            inputRef={register("email").ref}
+            onChange={register("email").onChange}
+            onBlur={register("email").onBlur}
+            disabled={isLoading}
+          />
+          {errors.email && (
+            <Typography variant="small" color="red" className="mt-1 text-sm">
+              {errors.email.message}
+            </Typography>
           )}
+        </div>
 
-          <Button
-            type="submit"
-            color="blue"
-            fullWidth
-            size="lg"
-            loading={isLoading}
-            disabled={isLoading}
-            className="mt-6"
-          >
-            {isLoading ? "Đang tạo tài khoản..." : "Tạo Tài Khoản"}
-          </Button>
-        </form>
-
-        {/* Divider */}
         <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-blue-gray-200" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-blue-gray-500 font-medium">
-              Hoặc đăng ký bằng
-            </span>
-          </div>
+          <Input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            label="Mật khẩu"
+            size="lg"
+            error={!!errors.password}
+            inputRef={register("password").ref}
+            onChange={register("password").onChange}
+            onBlur={register("password").onBlur}
+            disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-gray-400 hover:text-blue-gray-600 focus:outline-none"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+          {errors.password && (
+            <Typography variant="small" color="red" className="mt-1 text-sm">
+              {errors.password.message}
+            </Typography>
+          )}
         </div>
 
-        {/* Social Login */}
-        <div className="space-y-3">
-          <Button
-            variant="outlined"
-            color="blue-gray"
-            fullWidth
+        <div className="relative">
+          <Input
+            name="confirmPassword"
+            type={showConfirmPassword ? "text" : "password"}
+            label="Nhập lại mật khẩu"
             size="lg"
-            className="flex items-center justify-center gap-3 hover:bg-blue-gray-50"
+            error={!!errors.confirmPassword}
+            inputRef={register("confirmPassword").ref}
+            onChange={register("confirmPassword").onChange}
+            onBlur={register("confirmPassword").onBlur}
             disabled={isLoading}
+          />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-gray-400 hover:text-blue-gray-600 focus:outline-none"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
           >
-            <GoogleIcon />
-            Đăng ký bằng Google
-          </Button>
-
-          <Button
-            variant="outlined"
-            color="blue-gray"
-            fullWidth
-            size="lg"
-            className="flex items-center justify-center gap-3 hover:bg-blue-gray-50"
-            disabled={isLoading}
-          >
-            <FacebookIcon />
-            Đăng ký bằng Facebook
-          </Button>
+            {showConfirmPassword ? (
+              <EyeSlashIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </button>
+          {errors.confirmPassword && (
+            <Typography variant="small" color="red" className="mt-1 text-sm">
+              {errors.confirmPassword.message}
+            </Typography>
+          )}
         </div>
 
-        {/* Sign In Link */}
+        {error && (
+          <Alert color="red" className="text-sm">
+            {error}
+          </Alert>
+        )}
+
+        <Button
+          type="submit"
+          color="blue"
+          fullWidth
+          size="lg"
+          loading={isLoading}
+          disabled={isLoading}
+          className="mt-6"
+        >
+          {isLoading ? "Đang tạo tài khoản..." : "Tạo Tài Khoản"}
+        </Button>
+      </form>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-blue-gray-200" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-blue-gray-500 font-medium">
+            Hoặc đăng ký bằng
+          </span>
+        </div>
+      </div>
+
+      {/* Social Login */}
+      <div className="space-y-3">
+        <Button
+          variant="outlined"
+          color="blue-gray"
+          fullWidth
+          size="lg"
+          className="flex items-center justify-center gap-3 hover:bg-blue-gray-50"
+          disabled={isLoading}
+        >
+          <GoogleIcon />
+          Đăng ký bằng Google
+        </Button>
+
+        <Button
+          variant="outlined"
+          color="blue-gray"
+          fullWidth
+          size="lg"
+          className="flex items-center justify-center gap-3 hover:bg-blue-gray-50"
+          disabled={isLoading}
+        >
+          <FacebookIcon />
+          Đăng ký bằng Facebook
+        </Button>
+      </div>
+
+      {/* Sign In Link */}
       <div className="text-center flex items-center justify-center gap-1">
         <Typography variant="small" className="font-normal">
           Đã có tài khoản?
@@ -296,6 +283,6 @@ export default function RegisterPage() {
           </Typography>
         </Link>
       </div>
-      </div>
+    </div>
   );
 }

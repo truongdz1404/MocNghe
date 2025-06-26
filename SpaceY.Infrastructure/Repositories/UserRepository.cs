@@ -22,6 +22,10 @@ namespace SpaceY.Infrastructure.Repositories
         {
           return _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
+        public Task<ApplicationUser?> FindUserByNameAsync(string name)
+        {
+          return _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == name);
+        }
 
         public async Task<ApplicationUser?> FindUserByRefreshTokenAsync(string refreshToken)
         {

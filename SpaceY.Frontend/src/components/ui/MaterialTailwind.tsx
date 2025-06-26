@@ -18,7 +18,7 @@ import {
     // Import types
     TypographyProps,
     ButtonProps,
-    InputProps,
+    // InputProps,
     CardProps,
     IconButtonProps,
     StepperProps,
@@ -175,12 +175,14 @@ export const Button = ({
 );
 
 // Input wrapper
+import { InputProps as MTInputProps } from "@material-tailwind/react";
+
 export const Input = ({
     onPointerEnterCapture = () => { },
     onPointerLeaveCapture = () => { },
-    crossOrigin = "",
+    crossOrigin = "", // Đặt giá trị mặc định là chuỗi rỗng
     ...props
-}: Omit<InputProps, 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'crossOrigin'> & {
+}: Omit<MTInputProps, 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'crossOrigin'> & {
     onPointerEnterCapture?: () => void;
     onPointerLeaveCapture?: () => void;
     crossOrigin?: string;
@@ -188,11 +190,10 @@ export const Input = ({
     <MTInput
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
-        crossOrigin={crossOrigin}
+        crossOrigin={crossOrigin || undefined} // Đảm bảo crossOrigin không bị undefined
         {...props}
     />
 );
-
 // Card wrapper
 export const Card = ({
     placeholder = "",
