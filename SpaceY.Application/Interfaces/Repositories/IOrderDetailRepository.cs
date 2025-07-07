@@ -10,6 +10,6 @@ namespace SpaceY.Application.Interfaces.Repositories
     {
         Task<IEnumerable<OrderDetail>> GetOrderDetailsByOrderIdAsync(long orderId);
         Task<IEnumerable<OrderDetail>> GetOrderDetailsByProductIdAsync(long productId);
-        Task<decimal> GetTotalSalesByProductAsync(long productId);
+        Task<OrderDetail?> GetOrderDetailWithRelationsAsync(long id);
     }
 }

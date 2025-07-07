@@ -80,21 +80,6 @@ const AIChat: React.FC = () => {
     };
     
     const inputRef = useRef<HTMLInputElement>(null);
-    // const getAIResponse = (userInput: string): string => {
-    //     const input = userInput.toLowerCase();
-
-    //     if (input.includes('thiết kế') || input.includes('bố trí')) {
-    //         return 'Để có thiết kế tốt, bạn nên chú ý đến việc cân bằng màu sắc, kích thước và vị trí của các sản phẩm. Hãy thử sắp xếp sản phẩm theo nguyên tắc tam giác hoặc tạo điểm nhấn bằng cách đặt sản phẩm chính ở trung tâm.';
-    //     } else if (input.includes('màu sắc') || input.includes('màu')) {
-    //         return 'Việc phối màu rất quan trọng! Bạn có thể sử dụng màu tương phản để làm nổi bật sản phẩm, hoặc màu hài hòa để tạo cảm giác nhẹ nhàng. Hãy thử điều chỉnh màu nền và màu sản phẩm để tìm ra sự kết hợp phù hợp nhất.';
-    //     } else if (input.includes('kích thước') || input.includes('size')) {
-    //         return 'Kích thước sản phẩm nên phù hợp với tầm quan trọng của chúng trong thiết kế. Sản phẩm chính có thể to hơn, sản phẩm phụ nhỏ hơn. Sử dụng slider kích thước trong bảng thuộc tính để điều chỉnh.';
-    //     } else if (input.includes('cách sử dụng') || input.includes('hướng dẫn')) {
-    //         return 'Để sử dụng ứng dụng: 1) Tải ảnh nền lên, 2) Kéo sản phẩm từ danh sách vào canvas, 3) Click vào sản phẩm để điều chỉnh thuộc tính, 4) Sử dụng các handle để xoay và thay đổi kích thước.';
-    //     } else {
-    //         return 'Cảm ơn bạn đã hỏi! Tôi có thể giúp bạn về thiết kế, bố trí sản phẩm, phối màu, và cách sử dụng các tính năng của ứng dụng. Bạn có câu hỏi cụ thể nào không?';
-    //     }
-    // };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey) {
