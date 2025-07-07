@@ -10,14 +10,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-interface PageProps {
-    params: { id: string }
+interface Props {
+    id: string; // Thay params thành id, giữ kiểu string
 }
 
 const PAGE_SIZE = 4;
 const PAGE_NUMBER = 1;
 
-export default function ViewProductDetail({ params }: PageProps) {
+export default function ViewProductDetail({ id }: Props) {
     const [product, setProduct] = useState<ProductDto>()
     const [productRecently, setProductRecently] = useState<ProductDto[]>([]);
     const [anotherProducts, setAnotherProducts] = useState<ProductDto[]>([]);
@@ -30,7 +30,7 @@ export default function ViewProductDetail({ params }: PageProps) {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await ProductServices.GetById(parseInt(params.id), true);
+                const response = await ProductServices.GetById(parseInt(id), true);
                 setProduct(response);
                 const productRecently = ProductServices.GetPaginated({ pageNumber: PAGE_NUMBER, pageSize: PAGE_SIZE, categoryId: response?.categories[0]?.id, includeDeleted: false });
                 const anotherProducts = ProductServices.GetPaginated({ pageNumber: PAGE_NUMBER, pageSize: PAGE_SIZE, includeDeleted: false });
@@ -48,7 +48,7 @@ export default function ViewProductDetail({ params }: PageProps) {
             }
         };
         fetchProduct();
-    }, [params.id]);
+    }, [id]);
 
      const handleAddToCart = async ({
             productVariantId,
@@ -120,7 +120,7 @@ export default function ViewProductDetail({ params }: PageProps) {
                         return false;
                     }
         };
-    const isAddingToCart = addingToCart.has(Number.parseInt(params.id));
+    const isAddingToCart = addingToCart.has(Number.parseInt(id));
         const onAddToCartClick = async (product: ProductDto) => {
             // Get the first variant (assuming it's the default one)
             const defaultVariant = product.variants[0];
