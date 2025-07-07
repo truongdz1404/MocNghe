@@ -1,11 +1,12 @@
 'use client';
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 
-export const GoogleAnalytics = () => {
+// Component chính sử dụng useSearchParams
+const GoogleAnalyticsCore = () => {
     const pathname = usePathname();
     const searchParams = useSearchParams();
 
@@ -44,5 +45,14 @@ export const GoogleAnalytics = () => {
                 }}
             />
         </>
+    );
+};
+
+// Component wrapper với Suspense
+export const GoogleAnalytics = () => {
+    return (
+        <Suspense fallback={null}>
+            <GoogleAnalyticsCore />
+        </Suspense>
     );
 };
