@@ -13,7 +13,6 @@ namespace SpaceY.Infrastructure.Repositories
     public class OrderRepository : BaseRepository<Order>, IOrderRepository
     {
         private readonly ApplicationDbContext _context;
-
         public OrderRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
@@ -25,31 +24,10 @@ namespace SpaceY.Infrastructure.Repositories
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
-                        .ThenInclude(p => p.Images)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.ProductVariant)
-                        .ThenInclude(pv => pv.Color)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.ProductVariant)
-                        .ThenInclude(pv => pv.Size)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
-        }
-
-        public async Task<Order?> GetOrderWithDetailsAsync(long orderId)
-        {
-            return await _context.Orders
-                .Include(o => o.User)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)
-                        .ThenInclude(p => p.Images)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.ProductVariant)
-                        .ThenInclude(pv => pv.Color)
-                .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.ProductVariant)
-                        .ThenInclude(pv => pv.Size)
-                .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByStatusAsync(OrderStatus status)
@@ -62,32 +40,51 @@ namespace SpaceY.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> UpdateOrderStatusAsync(long orderId, OrderStatus status)
+        public async Task<Order?> GetOrderWithDetailsAsync(long orderId)
         {
-            var order = await _context.Orders.FindAsync(orderId);
-            if (order == null) return false;
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.ProductVariant)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
 
-            order.Status = status;
-            // order.ModifiedAt = DateTime.UtcNow;
-
-            await _context.SaveChangesAsync();
-            return true;
+        public async Task<IEnumerable<Order>> GetOrdersWithDetailsAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.ProductVariant)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
         }
 
         public async Task<decimal> GetTotalRevenueAsync()
         {
             return await _context.Orders
-                .Where(o => o.Status == OrderStatus.Shipped)
+                .Where(o => o.Status == OrderStatus.Completed)
                 .SumAsync(o => o.TotalPrice);
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
+        public async Task<decimal> GetRevenueByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
             return await _context.Orders
-                .Where(o => o.CreatedAt >= startDate && o.CreatedAt <= endDate)
+                .Where(o => o.Status == OrderStatus.Completed &&
+                           o.CreatedAt >= startDate &&
+                           o.CreatedAt <= endDate)
+                .SumAsync(o => o.TotalPrice);
+        }
+
+        public async Task<IEnumerable<Order>> GetRecentOrdersAsync(int count = 10)
+        {
+            return await _context.Orders
                 .Include(o => o.User)
-                .Include(o => o.OrderItems)
                 .OrderByDescending(o => o.CreatedAt)
+                .Take(count)
                 .ToListAsync();
         }
     }

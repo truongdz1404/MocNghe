@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SpaceY.API;
+using SpaceY.Application.Mappings;
 using SpaceY.Domain.Configs;
 using SpaceY.Domain.Entities;
 using SpaceY.Infrastructure.Data;
@@ -58,6 +59,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connectionString);
     }
 );
+builder.Services.AddAutoMapper(typeof(AddressMappingProfile));
+builder.Services.AddAutoMapper(typeof(OrderMappingProfile));
+
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);

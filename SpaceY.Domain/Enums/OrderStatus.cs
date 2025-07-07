@@ -7,7 +7,7 @@ namespace SpaceY.Domain.Enums
     {
         Pending,
         Shipped,
-        Delivered,
+        Completed,
         Canceled
     }
 }

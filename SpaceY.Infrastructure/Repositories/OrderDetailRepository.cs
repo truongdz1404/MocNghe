@@ -24,11 +24,7 @@ namespace SpaceY.Infrastructure.Repositories
             return await _context.OrderDetails
                 .Where(od => od.OrderId == orderId)
                 .Include(od => od.Product)
-                    .ThenInclude(p => p.Images)
                 .Include(od => od.ProductVariant)
-                    .ThenInclude(pv => pv.Color)
-                .Include(od => od.ProductVariant)
-                    .ThenInclude(pv => pv.Size)
                 .ToListAsync();
         }
 
@@ -41,11 +37,13 @@ namespace SpaceY.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<decimal> GetTotalSalesByProductAsync(long productId)
+        public async Task<OrderDetail?> GetOrderDetailWithRelationsAsync(long id)
         {
             return await _context.OrderDetails
-                .Where(od => od.ProductId == productId && od.Order.Status == OrderStatus.Shipped)
-                .SumAsync(od => od.TotalPrice);
+                .Include(od => od.Order)
+                .Include(od => od.Product)
+                .Include(od => od.ProductVariant)
+                .FirstOrDefaultAsync(od => od.Id == id);
         }
     }
 }
