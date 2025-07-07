@@ -3,14 +3,15 @@ import { Inter } from "next/font/google";
 import "@/styles/globals.css";
 import { MaterialTailwindProvider } from "@/components/MaterialTailwindProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+// import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 const inter = Inter({
   subsets: ['vietnamese', 'latin'],
   display: 'swap',
   variable: '--font-inter'
 });
-
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 export const metadata: Metadata = {
   title: {
     default: "Mộc Nghệ Decor",
@@ -68,7 +69,10 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>
+
+) 
+{
   return (
     <html lang="vi" suppressHydrationWarning className={inter.variable}>
       <head>
@@ -78,7 +82,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#f5f0e6" />
       </head>
       <body className={`${inter.className} bg-[#f5f0e6] antialiased`}>
-        <GoogleAnalytics />
+        <GoogleAnalytics gaId={GA_TRACKING_ID || ''} />
         <AuthProvider>
           <MaterialTailwindProvider>
             {children}
