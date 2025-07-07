@@ -1,12 +1,14 @@
-import ViewProductDetail from '@/components/product/ViewProductDetail'
-import React from 'react'
-interface PageProps {
-    params: { id: string }
+import ViewProductDetail from '@/components/product/ViewProductDetail';
+
+interface Props {
+  params: Promise<{ id: string }>;
 }
-export default function page({params}:PageProps) {
+
+export default async function Page({ params }: Props) {
+  const { id } = await params;
   return (
     <div>
-      <ViewProductDetail params={params}/>
+      <ViewProductDetail id={id} />
     </div>
-  )
+  );
 }
