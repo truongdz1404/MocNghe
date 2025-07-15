@@ -80,10 +80,10 @@ namespace SpaceY.Infrastructure.Services
 
             foreach (var item in createOrderDto.OrderItems)
             {
-                var product = await _productRepository.GetById(item.ProductId);
                 var productVariant = await _productVariantRepository.GetById(item.ProductVariantId);
+                var product = await _productRepository.GetById(productVariant.ProductId);
 
-                if (product == null || productVariant == null)
+                if (productVariant == null)
                     throw new ArgumentException($"Product or ProductVariant not found");
 
                 var itemTotalPrice = productVariant.Price * item.Quantity;
@@ -91,7 +91,7 @@ namespace SpaceY.Infrastructure.Services
 
                 var orderDetail = new OrderDetail
                 {
-                    ProductId = item.ProductId,
+                    ProductId = productVariant.ProductId,
                     ProductVariantId = item.ProductVariantId,
                     Quantity = item.Quantity,
                     TotalPrice = itemTotalPrice,
