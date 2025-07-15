@@ -6,13 +6,13 @@ import {
     Card,
     CardBody,
 } from "@/components/ui/MaterialTailwind";
-// import addressService, { AddressDto } from '@/';
+import { AddressDto } from '@/types/address';
 import { CartItem } from '@/services/CartServices';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-// import { Dialog } from '@material-tailwind/react';
-import { AddressDto } from '@/types/address';
 import addressService from '@/services/AddressServices';
+import OrderServices from '@/services/OrderServices';
+import { CreateOrderDto, CreateOrderDetailDto } from '@/types/order';
 
 interface CheckoutPopupProps {
     open: boolean;
@@ -63,8 +63,8 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
                 setAddressOption('existing');
             }
         } catch (err) {
-            setError('Failed to load addresses');
-            console.error('Error fetching addresses:', err);
+            setError('Không thể tải danh sách địa chỉ');
+            console.error('Lỗi khi lấy địa chỉ:', err);
         } finally {
             setLoading(false);
         }
@@ -89,27 +89,57 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
         return addresses.find(addr => addr.id.toString() === selectedAddressId);
     };
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         if (!selectedAddressId) {
-            setError('Please select an address');
+            setError('Vui lòng chọn một địa chỉ');
             return;
         }
 
         const selectedAddress = getSelectedAddress();
         if (!selectedAddress) {
-            setError('Selected address not found');
+            setError('Địa chỉ đã chọn không tồn tại');
             return;
         }
 
-        // Here you would typically call your checkout API
-        console.log('Checkout with:', {
-            address: selectedAddress,
-            items: selectedItems,
-            totalAmount
-        });
+        if (selectedItems.length === 0) {
+            setError('Giỏ hàng trống. Vui lòng chọn ít nhất một sản phẩm.');
+            return;
+        }
 
-        // For now, just close the popup
-        onClose();
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Chuẩn bị dữ liệu đơn hàng
+            const orderItems: CreateOrderDetailDto[] = selectedItems.map(item => {
+                if (!item.productVariantId || item.quantity <= 0) {
+                    throw new Error(`Dữ liệu sản phẩm không hợp lệ: ${item.productTitle}`);
+                }
+
+                return {
+                    productVariantId: item.productVariantId,
+                    quantity: item.quantity,
+                };
+            });
+
+            const createOrderDto: CreateOrderDto = {
+                // userId: '9068cd0c-9dff-480e-a45c-f62d073660ae',
+                orderItems: orderItems,
+            };
+
+        console.log('createOrderDto:', createOrderDto);
+            // Gọi API tạo Order
+            const createdOrder = await OrderServices.CreateOrder(createOrderDto);
+
+            // Chuyển hướng đến trang chi tiết đơn hàng
+            onClose();
+            router.push(`/order/${createdOrder.id}`);
+        } catch (err) {
+            setError('Không thể tạo đơn hàng. Vui lòng thử lại.');
+            console.error('Lỗi khi tạo đơn hàng:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (!open) return null;

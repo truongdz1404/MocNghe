@@ -26,8 +26,6 @@ namespace SpaceY.API.Controllers
         {
             return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
-
-
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -59,7 +57,7 @@ namespace SpaceY.API.Controllers
             return Ok(new { success = true, data = orders });
         }
 
-        [HttpGet("status/{status}")]
+        [HttpGet("status/{status}")]    
         public async Task<IActionResult> GetOrdersByStatus(OrderStatus status)
         {
             var orders = await _orderService.GetOrdersByStatusAsync(status);
@@ -71,10 +69,9 @@ namespace SpaceY.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(new { success = false, message = "Invalid model state", errors = ModelState });
-
             try
             {
-                var userId = GetCurrentUserId();
+                var userId =  GetCurrentUserId();
                 if (string.IsNullOrEmpty(userId))
                     return Unauthorized(new { success = false, message = "User not authenticated" });
                 createOrderDto.UserId = userId;
