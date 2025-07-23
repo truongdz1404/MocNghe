@@ -39,10 +39,10 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
     const router = useRouter();
 
     useEffect(() => {
-        if (open) {
-            fetchAddresses();
-        }
-    });
+        if (!open) return;
+        fetchAddresses();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     const fetchAddresses = async () => {
         try {
@@ -127,9 +127,9 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
                 orderItems: orderItems,
             };
 
-        console.log('createOrderDto:', createOrderDto);
+            console.log('createOrderDto:', createOrderDto);
             // Gọi API tạo Order
-           await OrderServices.CreateOrder(createOrderDto);
+            await OrderServices.CreateOrder(createOrderDto);
 
             // Chuyển hướng đến trang chi tiết đơn hàng
             onClose();
