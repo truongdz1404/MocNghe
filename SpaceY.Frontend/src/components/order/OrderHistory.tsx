@@ -176,7 +176,7 @@ export default function OrderHistory() {
             </Typography>
           </div>
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <Tabs value={activeTab} className="w-full md:w-max">
+            <Tabs value={activeTab} className="w-full md:min-w-96">
               <TabsHeader>
                 {TABS.map(({ label, value }) => (
                   <Tab
