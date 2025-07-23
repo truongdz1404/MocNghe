@@ -12,6 +12,7 @@
             [Required(ErrorMessage = "Email address are required")]
             [EmailAddress(ErrorMessage = "Invalid email address")]
             public string Email { get; set; } = null!;
+            public string UserName { get; set; } = string.Empty;
             [Required(ErrorMessage = "Password is required")]
             [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters")]
             public string Password { get; set; } = null!;

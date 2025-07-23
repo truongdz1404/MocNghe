@@ -1,3 +1,5 @@
+import { User } from "@/types/user";
+
 // types/auth.ts
 export interface LoginCredentials {
     email: string;
@@ -14,9 +16,9 @@ export interface LoginResponse {
     message: string;
 }
 
-export interface User {
-    email: string;
-    avata: string;
-    username: string;
-    // ... other user properties
-}
+// export interface User {
+//     email: string;
+//     avata: string;
+//     username: string;
+//     // ... other user properties
+// }

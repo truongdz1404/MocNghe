@@ -184,7 +184,7 @@ export default function CreateProductPage() {
     };
 
     return (
-        <div className="max-w-6xl mx-auto p-6 bg-white">
+        <div className="max-w-6xl p-6 h-screen bg-white overflow-y-auto">
             <h1 className="text-3xl font-bold mb-8 text-gray-800">Tạo Sản Phẩm Mới</h1>
 
             <form onSubmit={handleSubmit} className="space-y-8">

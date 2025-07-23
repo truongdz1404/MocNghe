@@ -194,7 +194,7 @@ namespace SpaceY.API.Controllers
 
                 // Get user info to return in response
                 var user = await _userService.GetUserByEmailAsync(registerDTO.Email);
-
+                
                 return Ok(new Response
                 {
                     Status = ResponseStatus.SUCCESS,

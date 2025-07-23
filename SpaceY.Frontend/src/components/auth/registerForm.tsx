@@ -91,17 +91,15 @@ export default function RegisterPage() {
       const user: CreateUser = {
         email: values.email,
         password: values.password,
-        fullName: values.email.split('@')[0],
+        userName: values.email.split('@')[0],
       };
 
       const data = await AuthServices.SignUp(user);
       console.log("Đăng ký thành công:", data);
 
       if (data.status === "Success") {
-        router.push('/');
-      } else {
         router.push('/login');
-      }
+      } 
     } catch (error: unknown) {
       console.error("Lỗi đăng ký:", error);
       let errorMessage = "Đăng ký thất bại. Vui lòng thử lại.";

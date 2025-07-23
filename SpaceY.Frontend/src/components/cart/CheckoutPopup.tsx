@@ -42,7 +42,7 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
         if (open) {
             fetchAddresses();
         }
-    }, [open]);
+    });
 
     const fetchAddresses = async () => {
         try {
@@ -129,11 +129,12 @@ const CheckoutPopup: React.FC<CheckoutPopupProps> = ({
 
         console.log('createOrderDto:', createOrderDto);
             // Gọi API tạo Order
-            const createdOrder = await OrderServices.CreateOrder(createOrderDto);
+           await OrderServices.CreateOrder(createOrderDto);
 
             // Chuyển hướng đến trang chi tiết đơn hàng
             onClose();
-            router.push(`/order/${createdOrder.id}`);
+            // router.push(`/order/${createdOrder.id}`);
+            router.push(`/order/orderHistory`);
         } catch (err) {
             setError('Không thể tạo đơn hàng. Vui lòng thử lại.');
             console.error('Lỗi khi tạo đơn hàng:', err);

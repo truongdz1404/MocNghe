@@ -23,6 +23,113 @@ namespace SpaceY.Infrastructure.Service
             _tokenService = tokenService;
             _userRepository = userRepository;
         }
+
+        public async Task<UserDTO> CreateUserAsync(UserDTO userDto, string password)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = userDto.UserName,
+                Email = userDto.Email,
+                AvatarUrl = userDto.Avatar
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                await _userManager.AddToRoleAsync(user, userDto.Role);
+            }
+
+            return userDto;
+        }
+
+        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
+        {
+            var users = _userManager.Users.ToList();
+            var userDtos = new List<UserDTO>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userDtos.Add(new UserDTO
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Avatar = user.AvatarUrl ?? string.Empty,
+                    Role = roles.FirstOrDefault() ?? string.Empty,
+                    LockoutEnd = user.LockoutEnd
+                });
+            }
+
+            return userDtos;
+        }
+
+        public async Task<UserDTO?> GetUserByIdAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return null;
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return new UserDTO
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Avatar = user.AvatarUrl ?? string.Empty,
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                LockoutEnd = user.LockoutEnd
+            };
+        }
+
+        public async Task<UserDTO> UpdateUserAsync(string id, UserDTO userDto)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            user.UserName = userDto.UserName;
+            user.Email = userDto.Email;
+            user.AvatarUrl = userDto.Avatar;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new Exception($"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+            }
+
+            // Update role if provided
+            if (!string.IsNullOrEmpty(userDto.Role))
+            {
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                await _userManager.AddToRoleAsync(user, userDto.Role);
+            }
+
+            return userDto;
+        }
+
+        public async Task<bool> DeleteUserAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return false;
+
+            var result = await _userManager.DeleteAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> ChangePasswordAsync(string id, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return false;
+
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return result.Succeeded;
+        }
         private async Task<TokenDTO> CreateAuthTokenAsync(ApplicationUser user, int expDays = -1)
         {
             try
@@ -112,7 +219,7 @@ namespace SpaceY.Infrastructure.Service
                 Email = user.Email!,
                 UserName = user.UserName!,
                 Avatar = user.AvatarUrl ?? "",
-             };
+            };
         }
         public async Task<UserDTO> GetUserByNameAsync(string name)
         {
@@ -124,7 +231,7 @@ namespace SpaceY.Infrastructure.Service
                 Email = user.Email!,
                 UserName = user.UserName!,
                 Avatar = user.AvatarUrl ?? "",
-             };
+            };
         }
     }
 }

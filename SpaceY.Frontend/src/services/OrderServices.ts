@@ -36,8 +36,8 @@ const GetOrderById = async (id: number): Promise<OrderDto | null> => {
     }
 };
 
-const GetOrdersByUserId = async (userId: string): Promise<OrderDto[]> => {
-    const response = await api.get(`/Order/user/${userId}`);
+const GetOrdersByUser = async (): Promise<OrderDto[]> => {
+    const response = await api.get(`/Order/user`);
     return response.data.data;
 };
 
@@ -120,7 +120,7 @@ const OrderServices = {
     GetAllOrders,
     GetPaginatedOrders,
     GetOrderById,
-    GetOrdersByUserId,
+    GetOrdersByUser,
     GetOrdersByStatus,
     CreateOrder,
     UpdateOrderStatus,

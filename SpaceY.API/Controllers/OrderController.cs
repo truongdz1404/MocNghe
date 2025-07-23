@@ -50,9 +50,10 @@ namespace SpaceY.API.Controllers
             return Ok(new { success = true, data = order });
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetOrdersByUserId(string userId)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetOrdersByUserId()
         {
+            var userId = GetCurrentUserId();
             var orders = await _orderService.GetOrdersByUserIdAsync(userId);
             return Ok(new { success = true, data = orders });
         }

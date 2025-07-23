@@ -1,21 +1,38 @@
 "use client"
-import { LogOut, Search, ShoppingBag, User } from 'lucide-react'
+import { Search, ShoppingBag, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation';
 import MocNgheLogo from '../../public/assets/logo1.png';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
+import { Avatar, Button, Menu, MenuHandler, MenuItem, MenuList, Typography } from '@/components/ui/MaterialTailwind';
+import React from 'react';
+import {
+    Cog6ToothIcon,
+    PowerIcon,
+    UserCircleIcon,
+} from "@heroicons/react/24/solid";
 
+const profileMenuItems = [
+    {
+        label: "Thông Tin Cá Nhân",
+        icon: UserCircleIcon,
+        href: "/user/profile"
+    },
+    {
+        label: "Lịch Sử Đặt Hàng",
+        icon: Cog6ToothIcon,
+        href: "/order/orderHistory"
+    },
+    {
+        label: "Đăng Xuất",
+        icon: PowerIcon,
+    },
+];
 export default function NavBar() {
     const router = useRouter();
 
     const { logout, isAuthenticated } = useAuth();
-
-    // useEffect(() => {
-    //     setIsClient(true);
-    //     const token = localStorage.getItem('jwtToken');
-    //     setIsLogin(!!token);
-    // }, []);
 
     const handleCartClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -25,12 +42,9 @@ export default function NavBar() {
             router.push("/cart");
         }
     };
-
     const handleLogout = async () => {
         await logout();
     };
-
-
 
     return (
         <div>
@@ -82,12 +96,81 @@ export default function NavBar() {
                         {!isAuthenticated
                             ? <Link href={"/login"}><User className='text-gray-800' /></Link>
                             :
-                            <button onClick={handleLogout}>
-                                <LogOut className='text-gray-800' />
-                            </button>}
+                            // <button onClick={handleLogout}>
+                            //     <LogOut className='text-gray-800' />
+                            // </button>}
+                            <AvatarWithUserDropdown handleLogout={handleLogout} />
+                        }
                     </div>
                 </div>
             </header>
         </div>
     )
+}
+
+interface AvatarWithUserDropdownProps {
+    handleLogout: () => Promise<void>;
+}
+
+export function AvatarWithUserDropdown({ handleLogout }: AvatarWithUserDropdownProps) {
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const router = useRouter();
+    const closeMenu = () => setIsMenuOpen(false);
+    const handleMenuItemClick = async (item: typeof profileMenuItems[0]) => {
+        closeMenu();
+        if (item.label === "Đăng Xuất") {
+            await handleLogout();
+        }else if (item.href) {
+            router.push(item.href)
+        }
+    }
+    return (
+        <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
+            <MenuHandler>
+                <Button
+                    variant="text"
+                    color="blue-gray"
+                    className="flex items-center rounded-full p-0"
+                >
+                    <Avatar
+                        variant="circular"
+                        size="sm"
+                        alt="tania andrew"
+                        withBorder={true}
+                        color="blue-gray"
+                        className=" p-0.5"
+                        src="https://docs.material-tailwind.com/img/face-2.jpg"
+                    />
+                </Button>
+            </MenuHandler>
+            <MenuList className="p-1">
+                {profileMenuItems.map((item, key) => {
+                    const isLastItem = key === profileMenuItems.length - 1;
+                    return (
+                        <MenuItem
+                            key={item.label}
+                            onClick={() => handleMenuItemClick(item)}
+                            className={`flex items-center gap-2 rounded ${isLastItem
+                                ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                                : ""
+                                }`}
+                        >
+                            {React.createElement(item.icon, {
+                                className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
+                                strokeWidth: 2,
+                            })}
+                            <Typography
+                                as="span"
+                                variant="small"
+                                className="font-normal"
+                                color={isLastItem ? "red" : "inherit"}
+                            >
+                                {item.label}
+                            </Typography>
+                        </MenuItem>
+                    );
+                })}
+            </MenuList>
+        </Menu>
+    );
 }
