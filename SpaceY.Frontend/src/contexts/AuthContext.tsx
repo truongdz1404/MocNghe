@@ -3,8 +3,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthServices from '@/services/AuthServices';
-import { User, LoginCredentials } from '@/types/auth';
+import { LoginCredentials } from '@/types/auth';
 import { AxiosError } from 'axios';
+import { User } from '@/types/user';
+// import { User } from '@/types/user';
 
 interface AuthContextType {
     user: User | null;

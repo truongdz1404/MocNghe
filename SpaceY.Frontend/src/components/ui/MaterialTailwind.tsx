@@ -54,47 +54,54 @@ import { StepProps } from '@material-tailwind/react/components/Stepper/Step';
 
 
 export const Spinner = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: SpinnerProps & { onPointerEnterCapture?: () => void; onPointerLeaveCapture?: () => void; }) => (
+}: SpinnerProps & {
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
+}) => (
     <MTSpinner
-        {...props}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
-    />
-  );
-export const Checkbox = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
-    crossOrigin = "",
-    ...props
-}: CheckboxProps & { onPointerEnterCapture?: () => void;
-     onPointerLeaveCapture?: () => void;
-        crossOrigin?: string; }) => (
-    <MTCheckbox
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
+    />
+);
+export const Checkbox = ({
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    crossOrigin = "",
+    onResize = () => { },
+    onResizeCapture = () => { },
+    ...props
+}: CheckboxProps & {
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    crossOrigin?: string;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
+}) => (
+    <MTCheckbox
         crossOrigin={crossOrigin}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
+        {...props}
     />
-  );
+);
 // Alert wrapper
 export const Alert = ({
-    onPointerEnterCapture,
-    onPointerLeaveCapture,
-    placeholder,
     ...props
-}: AlertProps & {
-    placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
-}) => (
+}: AlertProps) => (
     <MTAlert
         {...props}
-        {...(placeholder && { placeholder })}
-        {...(onPointerEnterCapture && { onPointerEnterCapture })}
-        {...(onPointerLeaveCapture && { onPointerLeaveCapture })}
     />
 );
 
@@ -103,18 +110,24 @@ export const Menu = (props: MenuProps) => <MTMenu {...props} />;
 export const MenuHandler = (props: MenuHandlerProps) => <MTMenuHandler {...props} />;
 export const MenuList = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<MenuListProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<MenuListProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTMenuList
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -139,18 +152,24 @@ export const MenuItem = ({
 );
 export const Typography = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<TypographyProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<TypographyProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTTypography
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -158,18 +177,24 @@ export const Typography = ({
 // Button wrapper
 export const Button = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<ButtonProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<ButtonProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTButton
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -178,37 +203,49 @@ export const Button = ({
 import { InputProps as MTInputProps } from "@material-tailwind/react";
 
 export const Input = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
-    crossOrigin = "", // Đặt giá trị mặc định là chuỗi rỗng
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    crossOrigin = "",
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<MTInputProps, 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'crossOrigin'> & {
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+}: Omit<MTInputProps, 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'crossOrigin' | 'onResize' | 'onResizeCapture'> & {
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
     crossOrigin?: string;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTInput
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
-        crossOrigin={crossOrigin || undefined} // Đảm bảo crossOrigin không bị undefined
+        crossOrigin={crossOrigin || undefined}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
 // Card wrapper
 export const Card = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<CardProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<CardProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTCard
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -216,18 +253,24 @@ export const Card = ({
 // CardHeader wrapper
 export const CardHeader = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<CardHeaderProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<CardHeaderProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTCardHeader
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -235,18 +278,24 @@ export const CardHeader = ({
 // CardBody wrapper
 export const CardBody = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<CardBodyProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<CardBodyProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTCardBody
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -254,18 +303,24 @@ export const CardBody = ({
 // CardFooter wrapper
 export const CardFooter = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<CardFooterProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<CardFooterProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTCardFooter
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -273,18 +328,24 @@ export const CardFooter = ({
 // IconButton wrapper
 export const IconButton = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<IconButtonProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<IconButtonProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTIconButton
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -292,18 +353,24 @@ export const IconButton = ({
 // Step wrapper
 export const Step = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<StepProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<StepProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTStep
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -311,18 +378,24 @@ export const Step = ({
 // Stepper wrapper
 export const Stepper = ({
     placeholder = "",
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<StepperProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<StepperProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTStepper
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
@@ -350,57 +423,75 @@ export const Tabs = ({
 
 // TabsHeader wrapper
 export const TabsHeader = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
     placeholder = "",
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<TabsHeaderProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
+}: Omit<TabsHeaderProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerEnterCapture?: () => void;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTTabsHeader
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
 
 // Tab wrapper
 export const Tab = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
     placeholder = "",
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<TabProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
-    onPointerEnterCapture?: () => void;
-        placeholder?: string;
-    onPointerLeaveCapture?: () => void;
+}: Omit<TabProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
+    placeholder?: string;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTTab
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );
 
 // Avatar wrapper - Avatar doesn't support placeholder
 export const Avatar = ({
-    onPointerEnterCapture = () => { },
-    onPointerLeaveCapture = () => { },
     placeholder = "",
+    onPointerEnterCapture = undefined,
+    onPointerLeaveCapture = undefined,
+    onResize = () => { },
+    onResizeCapture = () => { },
     ...props
-}: Omit<AvatarProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture'> & {
-    onPointerEnterCapture?: () => void;
+}: Omit<AvatarProps, 'placeholder' | 'onPointerEnterCapture' | 'onPointerLeaveCapture' | 'onResize' | 'onResizeCapture'> & {
     placeholder?: string;
-    onPointerLeaveCapture?: () => void;
+    onPointerEnterCapture?: React.PointerEventHandler<HTMLElement>;
+    onPointerLeaveCapture?: React.PointerEventHandler<HTMLElement>;
+    onResize?: React.UIEventHandler<HTMLElement>;
+    onResizeCapture?: React.UIEventHandler<HTMLElement>;
 }) => (
     <MTAvatar
         placeholder={placeholder}
         onPointerEnterCapture={onPointerEnterCapture}
         onPointerLeaveCapture={onPointerLeaveCapture}
+        onResize={onResize}
+        onResizeCapture={onResizeCapture}
         {...props}
     />
 );

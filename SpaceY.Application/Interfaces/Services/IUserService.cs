@@ -16,5 +16,12 @@ namespace SpaceY.Application.Services
         Task<UserDTO> GetUserByNameAsync(string name);
         Task RemoveRefreshTokenAsync(string refreshToken);
 
+        // CRUD operations
+        Task<UserDTO> CreateUserAsync(UserDTO userDto, string password);
+        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+        Task<UserDTO?> GetUserByIdAsync(string id);
+        Task<UserDTO> UpdateUserAsync(string id, UserDTO userDto);
+        Task<bool> DeleteUserAsync(string id);
+        Task<bool> ChangePasswordAsync(string id, string currentPassword, string newPassword);
     }
 }

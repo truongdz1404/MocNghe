@@ -24,9 +24,11 @@ namespace SpaceY.Infrastructure.Services
         {
             var user = new ApplicationUser
             {
-                UserName = EmailHelper.GetUserName(registerDTO.Email),
+                UserName = string.IsNullOrEmpty(registerDTO.UserName) ? registerDTO.UserName : EmailHelper.GetUserName(registerDTO.Email),
                 Email = registerDTO.Email,
                 EmailConfirmed = isConfirmed,
+                AvatarUrl = registerDTO.AvatarUrl,
+                PhoneNumber = registerDTO.Phone
             };
 
             var result = await _userManager.CreateAsync(user, registerDTO.Password);

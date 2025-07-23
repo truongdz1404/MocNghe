@@ -1,6 +1,7 @@
-import { User } from "@/types/auth";
+// import { User } from "@/types/auth";
 import { ProductDto } from "@/types/product";
 import { ProductVariantDto } from "@/types/productVariant";
+import { User } from "@/types/user";
 
 export enum OrderStatus {
     Pending = 'Pending',

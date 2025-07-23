@@ -3,13 +3,13 @@ import { OrderDetailDto, UpdateOrderDetailDto } from "@/types/order";
 import axios from "axios";
 
 const GetOrderDetailsByOrderId = async (orderId: number): Promise<OrderDetailDto[]> => {
-    const response = await api.get(`/api/OrderDetails/order/${orderId}`);
+    const response = await api.get(`/OrderDetails/order/${orderId}`);
     return response.data.data;
 };
 
 const GetOrderDetailById = async (id: number): Promise<OrderDetailDto | null> => {
     try {
-        const response = await api.get(`/api/OrderDetails/${id}`);
+        const response = await api.get(`/OrderDetails/${id}`);
         return response.data.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -24,7 +24,7 @@ const UpdateOrderDetail = async (
     updateOrderDetailDto: UpdateOrderDetailDto
 ): Promise<OrderDetailDto | null> => {
     try {
-        const response = await api.put(`/api/OrderDetails/${id}`, updateOrderDetailDto);
+        const response = await api.put(`/OrderDetails/${id}`, updateOrderDetailDto);
         return response.data.data;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -36,7 +36,7 @@ const UpdateOrderDetail = async (
 
 const DeleteOrderDetail = async (id: number): Promise<boolean> => {
     try {
-        await api.delete(`/api/OrderDetails/${id}`);
+        await api.delete(`/OrderDetails/${id}`);
         return true;
     } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 404) {

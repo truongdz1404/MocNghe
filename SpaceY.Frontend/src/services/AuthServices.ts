@@ -1,7 +1,8 @@
 // services/auth.ts
 import api from "@/services/api";
 import { LoginCredentials, LoginResponse } from "@/types/auth";
-import { CreateUser } from "@/types/user";
+import { ResponseWith } from "@/types/response";
+import { CreateUser, User } from "@/types/user";
 
 const SignIn = async (credentials: LoginCredentials): Promise<LoginResponse> => {
     const response = await api.post('/auth/login', credentials);
@@ -24,7 +25,7 @@ const RefreshToken = async () => {
     return response.data;
 };
 
-const GetCurrentUser = async () => {
+const GetCurrentUser = async (): Promise<ResponseWith<User>> => {
     const response = await api.get('/auth/me');
     return response.data;
 };
