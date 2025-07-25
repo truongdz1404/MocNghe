@@ -23,5 +23,8 @@ namespace SpaceY.Application.Interfaces.Repositories
 
         Task<PaginatedData<Product>> GetPaginatedWithFilterAsync(int pageNumber, int pageSize, bool includeDeleted = false, long? categoryId = null);
         Task<IEnumerable<Product>> SearchAsync(string searchTerm);
+
+        Task<Product?> GetByIdWithImagesAndVariants(long id);
+        Task<long> GetMaxIdAsync();
     }
 }

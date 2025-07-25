@@ -11,6 +11,8 @@ namespace SpaceY.Domain.DTOs.Category
         public string Name { get; set; } = string.Empty;
         public string Url { get; set; } = string.Empty;
         public bool Visible { get; set; } = true;
+        public DateTime CreatedAt { get; set; }
+
         public bool Deleted { get; set; } = false;
     }
 }

@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SpaceY.Application.Services;
 using SpaceY.Domain.DTOs;
+using SpaceY.Domain.DTOs.Address;
 using SpaceY.Domain.DTOs.User;
 using SpaceY.Domain.Entities;
 using SpaceY.Domain.Interfaces.IRepositories;
@@ -47,25 +49,33 @@ namespace SpaceY.Infrastructure.Service
             return userDto;
         }
 
-        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
+        public async Task<IEnumerable<object>> GetAllUsersAsync()
         {
-            var users = _userManager.Users.ToList();
-            var userDtos = new List<UserDTO>();
-
+            var users = _userManager.Users.Include(u => u.Addresses).ToList();
+            var result = new List<object>();
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                userDtos.Add(new UserDTO
+                var addressDtos = user.Addresses?.Select(a => new AddressDto
                 {
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    Avatar = user.AvatarUrl ?? string.Empty,
-                    Role = roles.FirstOrDefault() ?? string.Empty,
-                    LockoutEnd = user.LockoutEnd
+                    Id = a.Id,
+                   State = a.State,
+                   Street = a.Street,
+                    City = a.City,
+                }).ToList();
+
+                result.Add(new
+                {
+                    id = user.Id,
+                    username = user.UserName,
+                    email = user.Email,
+                    avatarUrl = user.AvatarUrl ?? string.Empty,
+                    role = roles.FirstOrDefault() ?? string.Empty,
+                    phoneNumber = user.PhoneNumber,
+                    address = addressDtos
                 });
             }
-
-            return userDtos;
+            return result;
         }
 
         public async Task<UserDTO?> GetUserByIdAsync(string id)
@@ -214,11 +224,15 @@ namespace SpaceY.Infrastructure.Service
             var user = await _userRepository.FindUserByEmailAsync(email);
             if (user == null)
                 throw new Exception($"User with email '{email}' not found.");
+            var roles = await _userManager.GetRolesAsync(user);
+
             return new UserDTO
             {
                 Email = user.Email!,
                 UserName = user.UserName!,
                 Avatar = user.AvatarUrl ?? "",
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                LockoutEnd = user.LockoutEnd
             };
         }
         public async Task<UserDTO> GetUserByNameAsync(string name)
@@ -226,11 +240,14 @@ namespace SpaceY.Infrastructure.Service
             var user = await _userRepository.FindUserByNameAsync(name);
             if (user == null)
                 throw new Exception($"User with email '{name}' not found.");
+            var roles = await _userManager.GetRolesAsync(user);
             return new UserDTO
             {
                 Email = user.Email!,
                 UserName = user.UserName!,
                 Avatar = user.AvatarUrl ?? "",
+                Role = roles.FirstOrDefault() ?? string.Empty,
+                LockoutEnd = user.LockoutEnd
             };
         }
     }

@@ -116,14 +116,27 @@ export function AvatarWithUserDropdown({ handleLogout }: AvatarWithUserDropdownP
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const router = useRouter();
     const closeMenu = () => setIsMenuOpen(false);
+    const { user } = useAuth();
     const handleMenuItemClick = async (item: typeof profileMenuItems[0]) => {
         closeMenu();
         if (item.label === "Đăng Xuất") {
             await handleLogout();
-        }else if (item.href) {
+        } else if (item.href) {
             router.push(item.href)
         }
     }
+    console.log('user', user);
+    
+    let dynamicMenuItems = [...profileMenuItems];
+    if(user && (user.role === "Admin" || user.role === "admin")) {
+        dynamicMenuItems = [{
+            label: "Dashboard",
+            icon: Cog6ToothIcon,
+            href: "/dashboard"
+        },
+    ...dynamicMenuItems]
+    }
+
     return (
         <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end">
             <MenuHandler>
@@ -144,8 +157,8 @@ export function AvatarWithUserDropdown({ handleLogout }: AvatarWithUserDropdownP
                 </Button>
             </MenuHandler>
             <MenuList className="p-1">
-                {profileMenuItems.map((item, key) => {
-                    const isLastItem = key === profileMenuItems.length - 1;
+                {dynamicMenuItems.map((item, key) => {
+                    const isLastItem = key === dynamicMenuItems.length - 1;
                     return (
                         <MenuItem
                             key={item.label}

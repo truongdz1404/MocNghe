@@ -63,7 +63,9 @@ namespace SpaceY.Infrastructure.Services
                 Name = dto.Name.Trim(),
                 Url = url,
                 Visible = dto.Visible,
-                Deleted = false
+                Deleted = false,
+                CreatedAt = DateTime.UtcNow,
+                // ModifiedAt = DateTime.UtcNow
             };
 
             var createdCategory = await _repository.Create(category);
@@ -135,7 +137,8 @@ namespace SpaceY.Infrastructure.Services
                 Name = category.Name,
                 Url = category.Url,
                 Visible = category.Visible,
-                Deleted = category.Deleted
+                Deleted = category.Deleted,
+                CreatedAt = category.CreatedAt
             };
         }
 

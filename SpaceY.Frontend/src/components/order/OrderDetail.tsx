@@ -199,6 +199,8 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, or
                                                                 <Image
                                                                     src={item.product.image2DUrl}
                                                                     alt={item.product.title}
+                                                                    width={64}
+                                                                    height={64}
                                                                     className="w-16 h-16 rounded-lg border border-gray-300 object-cover"
                                                                 />
                                                             ) : (

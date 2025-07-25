@@ -45,8 +45,8 @@ namespace SpaceY.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllUsers()
+        // [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
