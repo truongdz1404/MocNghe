@@ -1,8 +1,13 @@
+import { AddressDto } from "@/types/address";
+
 export interface User {
+    id: string;
     username: string;
     email: string;
     avatarUrl: string;
     role: string;
+    phoneNumber?: string;
+    address?: AddressDto[];
 }
 
 export interface CreateUser {
@@ -15,9 +20,11 @@ export interface CreateUser {
 }
 
 interface UpdateUser {
+    id: string;
     username?: string;
     email?: string;
     phoneNumber?: string;
+    role?: string;
     avatarUrl?: string;
 }
 

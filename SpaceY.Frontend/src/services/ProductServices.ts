@@ -48,12 +48,14 @@ const GetPaginated = async (params: ProductSearchParams = {}): Promise<Paginated
         pageNumber = 1,
         pageSize = 10,
         includeDeleted = false,
+        searchTerm,
         categoryId,
     } = params;
 
     const queryParams = new URLSearchParams({
         pageNumber: pageNumber.toString(),
         pageSize: pageSize.toString(),
+        searchTerm: searchTerm ? encodeURIComponent(searchTerm) : '',
         includeDeleted: includeDeleted.toString()
     });
 

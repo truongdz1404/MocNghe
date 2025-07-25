@@ -100,34 +100,34 @@ function ProfilePage() {
         }
     };
 
-    const handleProfileUpdate = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!user) return;
+    // const handleProfileUpdate = async (e: React.FormEvent) => {
+    //     e.preventDefault();
+    //     if (!user) return;
 
-        try {
-            setLoading(true);
-            const updatedUser = await UserServices.updateUser(user.email, {
-                username: profileForm.username,
-                email: profileForm.email,
-                avatarUrl: profileForm.avatarUrl,
-                // role: user.role
-            });
+    //     try {
+    //         setLoading(true);
+    //         const updatedUser = await UserServices.updateUser(user.email, {
+    //             username: profileForm.username,
+    //             email: profileForm.email,
+    //             avatarUrl: profileForm.avatarUrl,
+    //             // role: user.role
+    //         });
 
-            // Update local form state with new data
-            setProfileForm({
-                username: updatedUser.username,
-                email: updatedUser.email,
-                avatarUrl: updatedUser.avatarUrl || ''
-            });
+    //         // Update local form state with new data
+    //         setProfileForm({
+    //             username: updatedUser.username,
+    //             email: updatedUser.email,
+    //             avatarUrl: updatedUser.avatarUrl || ''
+    //         });
 
-            alert('Profile updated successfully!');
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            alert('Failed to update profile');
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         alert('Profile updated successfully!');
+    //     } catch (error) {
+    //         console.error('Error updating profile:', error);
+    //         alert('Failed to update profile');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleAddAddress = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -192,7 +192,7 @@ function ProfilePage() {
                 </Typography>
             </div>
 
-            <form onSubmit={handleProfileUpdate} className="space-y-6">
+            <form onSubmit={() => { }} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <Typography variant="small" color="blue-gray" className="mb-2 font-medium">

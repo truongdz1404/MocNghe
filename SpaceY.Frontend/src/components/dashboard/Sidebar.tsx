@@ -12,30 +12,30 @@ import {
 import {
     ChevronRightIcon,
     ChevronDownIcon,
-    CubeTransparentIcon,
-    XMarkIcon,
 } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import Link from "next/link";
+// import Image from "next/image";
 
 export function SidebarWithLogo() {
     const [open, setOpen] = React.useState(0);
-    const [openAlert, setOpenAlert] = React.useState(true);
 
     const handleOpen = (value: number) => {
         setOpen(open === value ? 0 : value);
     };
 
     return (
-        <div className="h-[calc(100vh-2rem)] w-full max-w-[20rem] bg-white rounded-xl shadow-xl shadow-blue-gray-900/5 border border-blue-gray-50">
+        <div className="h-[calc(100vh-32px)]  w-full max-w-[20rem] bg-white rounded-xl shadow-xl shadow-blue-gray-900/5 border border-blue-gray-50">
             {/* Header */}
             <div className="mb-2 flex items-center gap-4 p-4">
-                <Image
-                    src="https://docs.material-tailwind.com/img/logo-ct-dark.png"
+                {/* <Image
+                    src=""
                     alt="brand"
+                    height={32}
+                    width={32}
                     className="h-8 w-8"
-                />
+                /> */}
                 <h5 className="text-xl font-semibold text-blue-gray-900">
-                    Sidebar
+                    Admin
                 </h5>
             </div>
 
@@ -98,14 +98,18 @@ export function SidebarWithLogo() {
                         <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open === 2 ? 'max-h-48 py-1' : 'max-h-0'
                             }`}>
                             <div className="pl-4">
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                                <Link href="/dashboard/order" className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                                     <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
                                     <span className="text-sm">Orders</span>
-                                </button>
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                                </Link>
+                                <Link href={"/dashboard/product"} className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                                     <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
                                     <span className="text-sm">Products</span>
-                                </button>
+                                </Link>
+                                <Link href={"/dashboard/category"} className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                                    <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
+                                    <span className="text-sm">Categories</span>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -124,10 +128,10 @@ export function SidebarWithLogo() {
                         </span>
                     </button>
 
-                    <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                    <Link href={"/dashboard/customer"} className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                         <UserCircleIcon className="h-5 w-5" />
-                        <span className="font-normal">Profile</span>
-                    </button>
+                        <span className="font-normal">Customer</span>
+                    </Link>
 
                     <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                         <Cog6ToothIcon className="h-5 w-5" />
@@ -142,7 +146,7 @@ export function SidebarWithLogo() {
             </nav>
 
             {/* Upgrade Alert */}
-            {openAlert && (
+            {/* {openAlert && (
                 <div className="mt-auto mx-3 mb-3 bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-4 text-white relative">
                     <button
                         onClick={() => setOpenAlert(false)}
@@ -173,7 +177,7 @@ export function SidebarWithLogo() {
                         </button>
                     </div>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }

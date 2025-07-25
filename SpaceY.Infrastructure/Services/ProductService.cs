@@ -112,33 +112,34 @@ namespace SpaceY.Infrastructure.Services
             var product = new Product
             {
                 Title = dto.Title.Trim(),
-                Description = dto.Description.Trim(),
+                Description = dto.Description?.Trim() ?? string.Empty,
                 Featured = dto.Featured,
                 Visible = dto.Visible,
                 Deleted = false,
                 CreatedAt = DateTime.UtcNow
             };
 
+            // Add categories
             if (dto.CategoryIds?.Any() == true)
             {
                 var categories = await _categoryRepository.GetByIdsAsync(dto.CategoryIds);
                 product.Categories = categories.ToList();
             }
 
+            // Add images (EF sẽ tự động set ProductId khi save)
             var images = new List<Image>();
             foreach (var image in dto.Images)
             {
                 images.Add(new Image
                 {
                     Data = image.Url.Trim(),
-                    CreatedAt = DateTime.UtcNow,
-                    Product = product,
-                    ProductId = product.Id
+                    CreatedAt = DateTime.UtcNow
+                    // Không cần set ProductId ở đây, EF sẽ tự động handle
                 });
             }
-
             product.Images = images;
 
+            // Add variants (EF sẽ tự động set ProductId khi save)
             var variants = new List<ProductVariant>();
             foreach (var variantDto in dto.Variants)
             {
@@ -152,19 +153,18 @@ namespace SpaceY.Infrastructure.Services
                     SKU = variantDto.SKU,
                     Visible = variantDto.Visible,
                     Deleted = false,
-                    CreatedAt = DateTime.UtcNow,
-                    Product = product,
-                    ProductId = product.Id
+                    CreatedAt = DateTime.UtcNow
+                    // Không cần set ProductId ở đây, EF sẽ tự động handle
                 });
             }
             product.Variants = variants;
 
-            var createdProduct = await _repository.Create(product);
+            // CHỈ GỌI Create MỘT LẦN và SaveChanges MỘT LẦN
+            await _repository.Create(product);
             await _repository.SaveChangeAsync();
 
-            return createdProduct.Id;
+            return product.Id;
         }
-
         public async Task<bool> UpdateAsync(long id, UpdateProductDto dto)
         {
             var product = await _repository.GetById(id);

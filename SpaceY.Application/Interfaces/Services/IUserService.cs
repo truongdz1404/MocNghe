@@ -18,7 +18,7 @@ namespace SpaceY.Application.Services
 
         // CRUD operations
         Task<UserDTO> CreateUserAsync(UserDTO userDto, string password);
-        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+        Task<IEnumerable<object>> GetAllUsersAsync();
         Task<UserDTO?> GetUserByIdAsync(string id);
         Task<UserDTO> UpdateUserAsync(string id, UserDTO userDto);
         Task<bool> DeleteUserAsync(string id);

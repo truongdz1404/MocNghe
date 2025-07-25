@@ -246,5 +246,19 @@ namespace SpaceY.Infrastructure.Repositories
 
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<long> GetMaxIdAsync()
+        {
+            return await _dbContext.Products.MaxAsync(p => (long?)p.Id) ?? 0;
+        }
+
+
+        public async Task<Product?> GetByIdWithImagesAndVariants(long id)
+        {
+            return await _dbContext.Products
+                .Include(p => p.Images)
+                .Include(p => p.Variants)
+                .Include(p => p.Categories)
+                .FirstOrDefaultAsync(p => p.Id == id && !p.Deleted);
+        }
     }
 }

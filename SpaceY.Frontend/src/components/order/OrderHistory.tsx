@@ -165,8 +165,8 @@ export default function OrderHistory() {
 
   return (
     <>
-      <Card className="h-full w-full">
-        <CardHeader floated={false} shadow={false} className="rounded-none">
+      <Card className="h-full w-full ">
+        <CardHeader floated={false} shadow={false} className="rounded-none relative z-50">
           <div className="mb-4">
             <Typography variant="h5" color="blue-gray">
               Lịch sử đơn hàng
@@ -175,7 +175,7 @@ export default function OrderHistory() {
               Xem và quản lý các đơn hàng của bạn
             </Typography>
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row mb-7">
             <Tabs value={activeTab} className="w-full md:min-w-96">
               <TabsHeader>
                 {TABS.map(({ label, value }) => (
@@ -199,7 +199,7 @@ export default function OrderHistory() {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="overflow-scroll px-0">
+        <CardBody className="overflow-scroll px-0 ">
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
