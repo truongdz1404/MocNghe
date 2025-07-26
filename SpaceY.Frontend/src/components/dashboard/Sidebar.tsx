@@ -5,7 +5,7 @@ import {
     PresentationChartBarIcon,
     ShoppingBagIcon,
     UserCircleIcon,
-    InboxIcon,
+    // InboxIcon,
     PowerIcon,
 } from "@heroicons/react/24/solid";
 import {
@@ -76,7 +76,7 @@ export function SidebarWithLogo() {
                                 }`}
                         >
                             <ShoppingBagIcon className="h-5 w-5" />
-                            <span className="flex-1 font-normal">E-Commerce</span>
+                            <span className="flex-1 font-normal">Quản Lí</span>
                             <ChevronDownIcon
                                 className={`h-4 w-4 transition-transform duration-200 ${open === 2 ? "rotate-180" : ""
                                     }`}
@@ -89,15 +89,15 @@ export function SidebarWithLogo() {
                             <div className="pl-4">
                                 <Link href="/dashboard/order" className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                                     <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Orders</span>
+                                    <span className="text-sm">Đơn Hàng</span>
                                 </Link>
                                 <Link href={"/dashboard/product"} className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                                     <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Products</span>
+                                    <span className="text-sm">Sản Phẩm</span>
                                 </Link>
                                 <Link href={"/dashboard/category"} className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                                     <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Categories</span>
+                                    <span className="text-sm">Danh Mục</span>
                                 </Link>
                             </div>
                         </div>
@@ -109,17 +109,17 @@ export function SidebarWithLogo() {
 
                 {/* Regular Menu Items */}
                 <div className="px-3 space-y-1">
-                    <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                    {/* <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                         <InboxIcon className="h-5 w-5" />
                         <span className="flex-1 font-normal">Inbox</span>
                         <span className="inline-flex items-center justify-center px-2 py-1 text-xs font-medium text-blue-gray-600 bg-blue-gray-100 rounded-full">
                             14
                         </span>
-                    </button>
+                    </button> */}
 
                     <Link href={"/dashboard/customer"} className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
                         <UserCircleIcon className="h-5 w-5" />
-                        <span className="font-normal">Customer</span>
+                        <span className="font-normal">Người Dùng</span>
                     </Link>
                 </div>
 

@@ -22,7 +22,7 @@ import {
   Badge,
   Avatar,
 } from "@/components/ui/MaterialTailwind";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 // import { Select, Option } from "@/components/ui/MaterialTailwind";
 import { ProductDto } from "@/types/product";
 import ProductServices from "@/services/ProductServices";
@@ -37,11 +37,12 @@ const PRODUCT_TABLE_HEAD = ["#", "Ảnh", "Tên sản phẩm", "Giá", "Số lư
 const PAGE_SIZE = 10;
 export default function ListProduct() {
 
-  const [products, setProducts] = useState<ProductDto[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductDto[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<ProductDto | null>(null);
+
   const handleEditProduct = (product: ProductDto) => {
     setEditProduct(product);
     setIsEditModalOpen(true);
@@ -55,9 +56,8 @@ export default function ListProduct() {
   const handleProductUpdated = () => {
     fetchProducts();
   };
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
 
   // Category filter
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
@@ -68,6 +68,39 @@ export default function ListProduct() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null);
 
+  // Filtered products based on search and category
+  const filteredProducts = useMemo(() => {
+    let filtered = allProducts;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(product =>
+        product.title.toLowerCase().includes(query) ||
+        product.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(product =>
+        product.categories?.some(cat => cat.id === selectedCategory)
+      );
+    }
+
+    return filtered;
+  }, [allProducts, searchQuery, selectedCategory]);
+
+  // Paginated products
+  const products = useMemo(() => {
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const endIndex = startIndex + PAGE_SIZE;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage]);
+
+  // Calculate pagination info
+  const totalPages = Math.ceil(filteredProducts.length / PAGE_SIZE);
+  const totalItems = filteredProducts.length;
 
   useEffect(() => {
     fetchCategories();
@@ -75,9 +108,14 @@ export default function ListProduct() {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, searchQuery, selectedCategory]);
+  }, []);
 
+  // Reset to first page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory]);
 
+  // Fetch categories for dropdown
   const fetchCategories = async () => {
     try {
       const data = await CategoryServices.GetAll();
@@ -91,23 +129,17 @@ export default function ListProduct() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
+      // Lấy toàn bộ danh sách sản phẩm một lần
       const params = {
-        pageNumber: currentPage,
-        pageSize: PAGE_SIZE,
+        pageNumber: 1,
+        pageSize: 1000, // Lấy số lượng lớn để có toàn bộ danh sách
         includeDeleted: false,
-        searchTerm: searchQuery || undefined,
-        categoryId: selectedCategory || undefined,
       };
-      if (selectedCategory) {
-        params.categoryId = selectedCategory;
-      }
       const data = await ProductServices.GetPaginated(params);
-      setProducts(data.data);
-      setTotalPages(Math.ceil(data.totalCount / PAGE_SIZE));
-      setTotalItems(data.totalCount || data.data.length);
+      setAllProducts(data.data || []);
     } catch (error) {
       console.error('Lỗi khi tải danh sách sản phẩm:', error);
-      setProducts([]);
+      setAllProducts([]);
     } finally {
       setLoading(false);
     }
@@ -115,7 +147,6 @@ export default function ListProduct() {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleViewDetails = (product: ProductDto) => {
@@ -168,7 +199,7 @@ export default function ListProduct() {
                 Danh sách sản phẩm
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                Xem và quản lý các sản phẩm của bạn ({totalItems} sản phẩm)
+                Xem và quản lý các sản phẩm của bạn ({allProducts.length} sản phẩm)
               </Typography>
             </div>
             <Button
@@ -256,7 +287,11 @@ export default function ListProduct() {
               ) : products.length === 0 ? (
                 <tr>
                   <td colSpan={PRODUCT_TABLE_HEAD.length} className="p-4 text-center">
-                    <Typography>Không tìm thấy sản phẩm nào</Typography>
+                    <Typography>
+                      {searchQuery || selectedCategory
+                        ? "Không tìm thấy sản phẩm nào phù hợp"
+                        : "Không tìm thấy sản phẩm nào"}
+                    </Typography>
                   </td>
                 </tr>
               ) : (
@@ -343,7 +378,7 @@ export default function ListProduct() {
 
         <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            Trang {currentPage} / {totalPages} - Tổng {totalItems} sản phẩm
+            Trang {currentPage} / {totalPages} - Hiển thị {products.length} / {totalItems} sản phẩm
           </Typography>
           <div className="flex gap-2">
             <Button

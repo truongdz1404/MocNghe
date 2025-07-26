@@ -1,4 +1,4 @@
-import OrderHistory from '@/components/dashboard/order/OrderHistory'
+import OrderHistory from '@/components/order/OrderHistory'
 import React from 'react'
 
 export default function page() {
