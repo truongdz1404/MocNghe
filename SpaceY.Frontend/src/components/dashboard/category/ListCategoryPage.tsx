@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Card,
     CardHeader,
@@ -10,19 +11,21 @@ import {
     Button,
     Input,
     Badge,
+    IconButton,
+    Tooltip,
+    Avatar,
     Dialog,
     DialogHeader,
     DialogBody,
     DialogFooter,
-    IconButton,
-    Tooltip,
-    Avatar,
 } from "@/components/ui/MaterialTailwind";
+import CategoryModal from "./CategoryModal";
 import { PlusIcon, MagnifyingGlassIcon, PencilIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CategoryServices from "@/services/CategoryServices";
 import { CategoryDto, UpdateCategoryDto } from "@/types/category";
+import Image from "next/image";
 
-const CATEGORY_TABLE_HEAD = ["#", "Image","Tên danh mục", "Trạng thái", "Ngày tạo", "Thao tác"];
+const CATEGORY_TABLE_HEAD = ["#", "Image", "Tên danh mục", "Trạng thái", "Ngày tạo", "Thao tác"];
 const PAGE_SIZE = 10;
 
 export default function ListCategory() {
@@ -33,15 +36,15 @@ export default function ListCategory() {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEdit, setIsEdit] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<CategoryDto | null>(null);
-    const [updateFormData, setUpdateFormData] = useState<UpdateCategoryDto>({ name: "", url: "", visible: true });
+    const [modalInitialData, setModalInitialData] = useState<UpdateCategoryDto>({ name: "", url: "", visible: true });
+    const [modalImagePreview, setModalImagePreview] = useState<string>("");
 
-    useEffect(() => {
-        fetchCategories();
-    }, [currentPage, searchQuery]);
 
-    const fetchCategories = async () => {
+
+    const fetchCategories = useCallback(async () => {
         setLoading(true);
         try {
             const params = {
@@ -59,7 +62,11 @@ export default function ListCategory() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [currentPage, searchQuery]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
 
     const handleSearch = (query: string) => {
         setSearchQuery(query);
@@ -90,30 +97,54 @@ export default function ListCategory() {
     };
 
 
-    const handleUpdateCategoryOpen = async (category: CategoryDto) => {
-        setSelectedCategory(category);
-        setUpdateFormData({
-            name: category.name,
-            url: category.url,
-            visible: category.visible,
-        });
-        setIsUpdateModalOpen(true);
+
+    const handleAddCategoryOpen = () => {
+        setIsEdit(false);
+        setSelectedCategory(null);
+        setModalInitialData({ name: "", url: "", visible: true });
+        setModalImagePreview("");
+        setIsModalOpen(true);
     };
 
-    const handleUpdateCategory = async () => {
-        if (!selectedCategory || !updateFormData.name.trim()) {
-            alert("Vui lòng nhập tên danh mục");
-            return;
-        }
+    const handleEditCategoryOpen = (category: CategoryDto) => {
+        setIsEdit(true);
+        setSelectedCategory(category);
+        setModalInitialData({
+            name: category.name,
+            url: category.url || "",
+            visible: category.visible,
+        });
+        setModalImagePreview(category.url || "");
+        setIsModalOpen(true);
+    };
+
+
+    const handleModalSubmit = async (data: UpdateCategoryDto) => {
         setLoading(true);
         try {
-            await CategoryServices.Update(selectedCategory.id, updateFormData);
-            alert("Cập nhật danh mục thành công!");
-            setIsUpdateModalOpen(false);
+            if (isEdit && selectedCategory) {
+                // If backend supports FormData, use it. Otherwise, just send DTO (url can be handled by backend if imageFile is present)
+                await CategoryServices.Update(selectedCategory.id, {
+                    name: data.name,
+                    url: data.url,
+                    visible: data.visible,
+                    // Optionally handle imageFile upload here if backend supports
+                });
+                alert("Cập nhật danh mục thành công!");
+            } else {
+                await CategoryServices.Create({
+                    name: data.name,
+                    url: data.url,
+                    visible: data.visible,
+                    // Optionally handle imageFile upload here if backend supports
+                });
+                alert("Thêm danh mục thành công!");
+            }
+            setIsModalOpen(false);
             fetchCategories();
         } catch (error) {
-            console.error('Lỗi khi cập nhật danh mục:', error);
-            alert("Có lỗi xảy ra khi cập nhật danh mục");
+            console.error('Lỗi khi thêm/cập nhật danh mục:', error);
+            alert("Có lỗi xảy ra khi thêm/cập nhật danh mục");
         } finally {
             setLoading(false);
         }
@@ -157,7 +188,7 @@ export default function ListCategory() {
                                 Xem và quản lý các danh mục ({totalItems} danh mục)
                             </Typography>
                         </div>
-                        <Button className="flex items-center gap-3">
+                        <Button className="flex items-center gap-3" onClick={handleAddCategoryOpen}>
                             <PlusIcon strokeWidth={2} className="h-4 w-4" />
                             Thêm danh mục
                         </Button>
@@ -221,15 +252,14 @@ export default function ListCategory() {
                                                     {(currentPage - 1) * PAGE_SIZE + index + 1}
                                                 </Typography>
                                             </td>
-                                           
+
                                             <td className={classes}>
                                                 <Avatar
-                                                    src={category.url  || "/placeholder-image.jpg"}
+                                                    src={category.url || "/placeholder-image.jpg"}
                                                     alt={category.name}
                                                     size="sm"
                                                     variant="rounded"
                                                 />
-                                                
                                             </td>
                                             <td className={classes}>
                                                 <Typography variant="small" color="blue-gray" className="font-normal">
@@ -264,7 +294,7 @@ export default function ListCategory() {
                                                         <IconButton
                                                             variant="text"
                                                             color="green"
-                                                            onClick={() => handleUpdateCategoryOpen(category)}
+                                                            onClick={() => handleEditCategoryOpen(category)}
                                                         >
                                                             <PencilIcon className="h-4 w-4" />
                                                         </IconButton>
@@ -313,13 +343,13 @@ export default function ListCategory() {
             </Card>
 
             {/* View Category Dialog */}
-            <Dialog open={isViewModalOpen} handler={() => setIsViewModalOpen(false)} size="sm">
+            <Dialog open={isViewModalOpen} handler={() => setIsViewModalOpen(false)} size="md">
                 <DialogHeader>
                     <Typography variant="h4" color="blue-gray">
                         Chi tiết danh mục
                     </Typography>
                 </DialogHeader>
-                <DialogBody>
+                <DialogBody className="max-h-[70vh] overflow-y-auto">
                     {selectedCategory && (
                         <div className="space-y-4">
                             <div>
@@ -332,11 +362,17 @@ export default function ListCategory() {
                             </div>
                             <div>
                                 <Typography variant="h6" color="blue-gray">
-                                    URL
+                                    Hình ảnh
                                 </Typography>
-                                <Typography variant="small" color="gray">
-                                    {selectedCategory.url}
-                                </Typography>
+                                <div>
+                                    <Image
+                                        src={selectedCategory.url || "/placeholder-image.jpg"}
+                                        alt={selectedCategory.name}
+                                        width={128}
+                                        height={128}
+                                        className="mt-2 w-32 h-32 object-cover rounded border"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <Typography variant="h6" color="blue-gray">
@@ -375,59 +411,16 @@ export default function ListCategory() {
                 </DialogFooter>
             </Dialog>
 
-            {/* Update Category Dialog */}
-            <Dialog open={isUpdateModalOpen} handler={() => setIsUpdateModalOpen(false)} size="sm">
-                <DialogHeader>
-                    <Typography variant="h4" color="blue-gray">
-                        Chỉnh sửa danh mục
-                    </Typography>
-                </DialogHeader>
-                <DialogBody>
-                    <div className="space-y-4">
-                        <Input
-                            label="Tên danh mục *"
-                            value={updateFormData.name}
-                            onChange={(e) => setUpdateFormData({ ...updateFormData, name: e.target.value })}
-                            required
-                            crossOrigin={undefined}
-                        />
-                        <Input
-                            label="URL"
-                            value={updateFormData.url}
-                            onChange={(e) => setUpdateFormData({ ...updateFormData, url: e.target.value })}
-                            crossOrigin={undefined}
-                        />
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={updateFormData.visible}
-                                onChange={(e) => setUpdateFormData({ ...updateFormData, visible: e.target.checked })}
-                                className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                            />
-                            <Typography variant="small" color="blue-gray">
-                                Hiển thị
-                            </Typography>
-                        </div>
-                    </div>
-                </DialogBody>
-                <DialogFooter>
-                    <Button
-                        variant="text"
-                        color="red"
-                        onClick={() => setIsUpdateModalOpen(false)}
-                        className="mr-1"
-                    >
-                        Hủy
-                    </Button>
-                    <Button
-                        color="blue"
-                        onClick={handleUpdateCategory}
-                        disabled={loading}
-                    >
-                        {loading ? "Đang cập nhật..." : "Cập nhật"}
-                    </Button>
-                </DialogFooter>
-            </Dialog>
+            {/* Add/Edit Category Modal */}
+            <CategoryModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleModalSubmit}
+                loading={loading}
+                initialData={modalInitialData}
+                isEdit={isEdit}
+                imagePreview={modalImagePreview}
+            />
         </div>
     );
 }

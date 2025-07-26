@@ -1,6 +1,7 @@
 'use client'
 import {
   MagnifyingGlassIcon,
+  ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { EyeIcon } from "@heroicons/react/24/solid";
 import {
@@ -17,13 +18,24 @@ import {
   Tab,
   IconButton,
   Tooltip,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  Select,
+  Option,
 } from "@/components/ui/MaterialTailwind";
 import { useEffect, useState } from "react";
 import OrderServices from "@/services/OrderServices";
 import { format } from "date-fns";
 import { OrderDto, OrderStatus } from "@/types/order";
-import OrderDetailModal from "@/components/order/OrderDetail";
-// import OrderDetailModal from "./OrderDetailModal";
+import OrderDetailDashboard from "@/components/dashboard/order/OrderDetail";
+import clsx from "clsx";
+
+// Type definitions
+interface UpdateOrderDto {
+  status: OrderStatus;
+}
 
 const TABS = [
   {
@@ -40,39 +52,67 @@ const TABS = [
   },
   {
     label: "Đã hủy",
-    value: OrderStatus.Cancelled,
+    value: OrderStatus.Canceled,
+  },
+  {
+    label: "Đã giao",
+    value: OrderStatus.Shipped,
   },
 ];
 
 const TABLE_HEAD = ["#", "Mã đơn hàng", "Ngày đặt", "Số sản phẩm", "Tổng tiền", "Trạng thái", "Thao tác"];
 
-const getStatusColor = (status: OrderStatus) => {
+const STATUS_OPTIONS = [
+  { value: OrderStatus.Pending, label: "Chờ xử lý", color: "blue" },
+  { value: OrderStatus.Completed, label: "Hoàn thành", color: "green" },
+  { value: OrderStatus.Canceled, label: "Đã hủy", color: "red" },
+  { value: OrderStatus.Shipped, label: "Đã giao", color: "yellow" },
+];
+
+const getStatusColor = (status: OrderStatus): "blue" | "green" | "red" | "gray" | "yellow" => {
   switch (status) {
     case OrderStatus.Pending:
       return "blue";
     case OrderStatus.Completed:
       return "green";
-    case OrderStatus.Cancelled:
+    case OrderStatus.Canceled:
       return "red";
+    case OrderStatus.Shipped:
+      return "yellow";
     default:
       return "gray";
   }
 };
 
-const getStatusText = (status: OrderStatus) => {
+const getStatusIcon = (status: OrderStatus): string => {
+  switch (status) {
+    case OrderStatus.Pending:
+      return "⏳";
+    case OrderStatus.Completed:
+      return "✅";
+    case OrderStatus.Canceled:
+      return "❌";
+    default:
+      return "📋";
+  }
+};
+
+const getStatusText = (status: OrderStatus): string => {
   switch (status) {
     case OrderStatus.Pending:
       return "Chờ xử lý";
     case OrderStatus.Completed:
       return "Hoàn thành";
-    case OrderStatus.Cancelled:
+    case OrderStatus.Canceled:
       return "Đã hủy";
+    case OrderStatus.Shipped:
+      return "Đã giao";
     default:
       return status;
   }
 };
 
-export default function OrderHistory() {
+export default function OrderHistoryDashboard() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<OrderDto[]>([]);
   const [activeTab, setActiveTab] = useState("all");
@@ -84,6 +124,12 @@ export default function OrderHistory() {
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<OrderDto | null>(null);
+
+  // Status update states
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [orderToUpdate, setOrderToUpdate] = useState<OrderDto | null>(null);
+  const [newStatus, setNewStatus] = useState<OrderStatus | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const pageSize = 5;
 
@@ -147,9 +193,50 @@ export default function OrderHistory() {
     setSelectedOrder(null);
   };
 
-  // const handlePageChange = (page: number) => {
-  //   setCurrentPage(page);
-  // };
+  const handleStatusChange = (order: OrderDto, status: string) => {
+    if (status !== order.status) {
+      setOrderToUpdate(order);
+      setNewStatus(status as OrderStatus);
+      setIsConfirmModalOpen(true);
+    }
+  };
+
+  const handleConfirmStatusUpdate = async () => {
+    if (!orderToUpdate || !newStatus) return;
+
+    try {
+      setIsUpdating(true);
+      const updateOrderDto: UpdateOrderDto = { status: newStatus };
+
+      const updatedOrder = await OrderServices.UpdateOrderStatus(orderToUpdate.id, updateOrderDto);
+
+      if (updatedOrder) {
+        // Update the orders list
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === orderToUpdate.id ? { ...order, status: newStatus } : order
+          )
+        );
+
+        // Show success message (you can implement toast notification here)
+        console.log('Cập nhật trạng thái đơn hàng thành công!');
+      }
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái đơn hàng:', error);
+      // Show error message (you can implement toast notification here)
+    } finally {
+      setIsUpdating(false);
+      setIsConfirmModalOpen(false);
+      setOrderToUpdate(null);
+      setNewStatus(null);
+    }
+  };
+
+  const handleCancelStatusUpdate = () => {
+    setIsConfirmModalOpen(false);
+    setOrderToUpdate(null);
+    setNewStatus(null);
+  };
 
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -165,7 +252,7 @@ export default function OrderHistory() {
 
   return (
     <>
-      <Card className="h-full w-full ">
+      <Card className="h-full w-full">
         <CardHeader floated={false} shadow={false} className="rounded-none relative z-50">
           <div className="mb-4">
             <Typography variant="h5" color="blue-gray">
@@ -199,7 +286,7 @@ export default function OrderHistory() {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="overflow-scroll px-0 ">
+        <CardBody className="overflow-scroll px-0">
           <table className="mt-4 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
@@ -288,12 +375,24 @@ export default function OrderHistory() {
                       </td>
                       <td className={classes}>
                         <div className="w-max">
-                          <Chip
-                            variant="ghost"
-                            size="sm"
-                            value={getStatusText(order.status)}
-                            color={getStatusColor(order.status)}
-                          />
+                          <Select
+                            value={order.status}
+                            onChange={(value) => handleStatusChange(order, value || order.status)}
+                            size="md"
+                            className={clsx(
+                              "border border-blue-gray-200 rounded-lg",
+                              `bg-${getStatusColor(order.status)}-100`
+                            )}
+                          >
+                            {STATUS_OPTIONS.map((option) => (
+                              <Option key={option.value} value={option.value}>
+                                <div className="flex items-center space-x-2">
+                                  <span>{getStatusIcon(option.value)}</span>
+                                  <span className="font-medium">{option.label}</span>
+                                </div>
+                              </Option>
+                            ))}
+                          </Select>
                         </div>
                       </td>
                       <td className={classes}>
@@ -339,11 +438,104 @@ export default function OrderHistory() {
       </Card>
 
       {/* Order Details Modal */}
-      <OrderDetailModal
+      <OrderDetailDashboard
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         order={selectedOrder}
       />
+
+      {/* Status Update Confirmation Modal */}
+      <Dialog
+        open={isConfirmModalOpen}
+        handler={handleCancelStatusUpdate}
+        size="sm"
+        className="bg-white shadow-2xl"
+      >
+        <DialogHeader className="flex items-center space-x-3 pb-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-orange-100">
+            <ExclamationTriangleIcon className="h-6 w-6 text-orange-600" />
+          </div>
+          <div>
+            <Typography variant="h5" color="blue-gray" className="font-bold">
+              Xác nhận thay đổi
+            </Typography>
+            <Typography variant="small" color="gray" className="font-normal mt-1">
+              Bạn có chắc chắn muốn thay đổi trạng thái?
+            </Typography>
+          </div>
+        </DialogHeader>
+
+        <DialogBody className="pt-0 pb-4">
+          {orderToUpdate && newStatus && (
+            <div className="bg-blue-50 rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <Typography variant="small" color="blue-gray" className="font-medium">
+                  Mã đơn hàng:
+                </Typography>
+                <Typography variant="small" color="blue-gray" className="font-bold">
+                  #{orderToUpdate.id}
+                </Typography>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Typography variant="small" color="blue-gray" className="font-medium">
+                  Trạng thái hiện tại:
+                </Typography>
+                <Chip
+                  variant="ghost"
+                  size="sm"
+                  value={getStatusText(orderToUpdate.status)}
+                  color={getStatusColor(orderToUpdate.status)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Typography variant="small" color="blue-gray" className="font-medium">
+                  Trạng thái mới:
+                </Typography>
+                <Chip
+                  variant="ghost"
+                  size="sm"
+                  value={getStatusText(newStatus)}
+                  color={getStatusColor(newStatus)}
+                />
+              </div>
+            </div>
+          )}
+
+          <Typography variant="small" color="gray" className="mt-4 text-center">
+            Thao tác này sẽ cập nhật trạng thái đơn hàng và không thể hoàn tác.
+          </Typography>
+        </DialogBody>
+
+        <DialogFooter className="space-x-4 pt-4">
+          <Button
+            variant="outlined"
+            color="gray"
+            onClick={handleCancelStatusUpdate}
+            className="hover:shadow-md transition-all duration-200"
+            disabled={isUpdating}
+          >
+            Hủy bỏ
+          </Button>
+          <Button
+            variant="gradient"
+            color="blue"
+            onClick={handleConfirmStatusUpdate}
+            className="hover:shadow-lg transition-all duration-200"
+            disabled={isUpdating}
+          >
+            {isUpdating ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Đang cập nhật...</span>
+              </div>
+            ) : (
+              "Xác nhận"
+            )}
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </>
   );
 }
