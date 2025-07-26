@@ -144,7 +144,7 @@ export default function OrderHistoryDashboard() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const data = await OrderServices.GetOrdersByUser();
+      const data = await OrderServices.GetAllOrders();
       setOrders(data);
       setTotalPages(Math.ceil(data.length / pageSize));
     } catch (error) {
