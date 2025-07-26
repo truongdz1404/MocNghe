@@ -5,7 +5,6 @@ import {
     PresentationChartBarIcon,
     ShoppingBagIcon,
     UserCircleIcon,
-    Cog6ToothIcon,
     InboxIcon,
     PowerIcon,
 } from "@heroicons/react/24/solid";
@@ -14,6 +13,8 @@ import {
     ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 // import Image from "next/image";
 
 export function SidebarWithLogo() {
@@ -23,8 +24,19 @@ export function SidebarWithLogo() {
         setOpen(open === value ? 0 : value);
     };
 
+    // Sửa lại để lấy đúng logout function từ useAuth hook
+    const { logout } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
+
     return (
-        <div className="h-[calc(100vh-32px)]  w-full max-w-[20rem] bg-white rounded-xl shadow-xl shadow-blue-gray-900/5 border border-blue-gray-50">
+        <div className="h-[calc(100vh-32px)] w-full max-w-[20rem] bg-white rounded-xl shadow-xl shadow-blue-gray-900/5 border border-blue-gray-50 flex flex-col">
             {/* Header */}
             <div className="mb-2 flex items-center gap-4 p-4">
                 {/* <Image
@@ -39,42 +51,19 @@ export function SidebarWithLogo() {
                 </h5>
             </div>
 
-            {/* Navigation List */}
-            <nav className="flex flex-col">
+            {/* Navigation List - flex-1 để content chiếm hết không gian còn lại */}
+            <nav className="flex flex-col flex-1">
                 {/* Dashboard Accordion */}
                 <div className="px-3">
                     <div className={`rounded-lg ${open === 1 ? 'bg-blue-gray-50' : ''}`}>
-                        <button
+                        <Link href="/dashboard"
                             onClick={() => handleOpen(1)}
                             className={`w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg transition-colors hover:bg-blue-gray-50 ${open === 1 ? 'bg-blue-gray-50 text-blue-gray-900' : 'text-blue-gray-700'
                                 }`}
                         >
                             <PresentationChartBarIcon className="h-5 w-5" />
                             <span className="flex-1 font-normal">Dashboard</span>
-                            <ChevronDownIcon
-                                className={`h-4 w-4 transition-transform duration-200 ${open === 1 ? "rotate-180" : ""
-                                    }`}
-                            />
-                        </button>
-
-                        {/* Accordion Body */}
-                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open === 1 ? 'max-h-48 py-1' : 'max-h-0'
-                            }`}>
-                            <div className="pl-4">
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
-                                    <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Analytics</span>
-                                </button>
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
-                                    <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Reporting</span>
-                                </button>
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
-                                    <ChevronRightIcon className="h-3 w-5" strokeWidth={3} />
-                                    <span className="text-sm">Projects</span>
-                                </button>
-                            </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
 
@@ -132,52 +121,29 @@ export function SidebarWithLogo() {
                         <UserCircleIcon className="h-5 w-5" />
                         <span className="font-normal">Customer</span>
                     </Link>
+                </div>
 
-                    <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
-                        <Cog6ToothIcon className="h-5 w-5" />
-                        <span className="font-normal">Settings</span>
-                    </button>
+                {/* Spacer để đẩy phần dưới xuống cuối sidebar */}
+                <div className="flex-1"></div>
 
-                    <button className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                {/* Bottom Actions - được đặt ở cuối sidebar */}
+                <div className="px-3 space-y-1 pb-4">
+                    <hr className="my-2 border-blue-gray-50" />
+
+                    <Link href="/" className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-blue-gray-700 hover:bg-blue-gray-50 transition-colors">
+                        <ArrowLeft className="h-5 w-5" />
+                        <span className="font-normal">Back To Home</span>
+                    </Link>
+
+                    <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg text-red-700 hover:bg-red-50 transition-colors"
+                    >
                         <PowerIcon className="h-5 w-5" />
                         <span className="font-normal">Log Out</span>
                     </button>
                 </div>
             </nav>
-
-            {/* Upgrade Alert */}
-            {/* {openAlert && (
-                <div className="mt-auto mx-3 mb-3 bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-4 text-white relative">
-                    <button
-                        onClick={() => setOpenAlert(false)}
-                        className="absolute top-2 right-2 p-1 hover:bg-white/10 rounded-lg transition-colors"
-                    >
-                        <XMarkIcon className="h-4 w-4" />
-                    </button>
-
-                    <CubeTransparentIcon className="mb-4 h-12 w-12 text-white/80" />
-
-                    <h6 className="text-lg font-semibold mb-1">
-                        Upgrade to PRO
-                    </h6>
-
-                    <p className="text-sm text-white/80 font-normal mb-4 leading-relaxed">
-                        Upgrade to Material Tailwind PRO and get even more components, plugins, advanced features and premium.
-                    </p>
-
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => setOpenAlert(false)}
-                            className="text-sm font-medium text-white/80 hover:text-white transition-colors"
-                        >
-                            Dismiss
-                        </button>
-                        <button className="text-sm font-medium text-white hover:text-white/90 transition-colors">
-                            Upgrade Now
-                        </button>
-                    </div>
-                </div>
-            )} */}
         </div>
     );
 }

@@ -78,10 +78,8 @@ export default function ListProduct() {
   }, [currentPage, searchQuery, selectedCategory]);
 
 
-  // Fetch categories for dropdown
   const fetchCategories = async () => {
     try {
-      // Giả sử có CategoryServices.GetAll hoặc API tương tự
       const data = await CategoryServices.GetAll();
       setCategories(data || []);
     } catch (error) {
@@ -90,7 +88,6 @@ export default function ListProduct() {
     }
   };
 
-  // Fetch products with proper pagination & category filter
   const fetchProducts = async () => {
     setLoading(true);
     try {

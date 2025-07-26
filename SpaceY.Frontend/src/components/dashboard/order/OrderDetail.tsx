@@ -18,7 +18,7 @@ const getStatusColor = (status: OrderStatus) => {
             return "bg-amber-100 text-amber-800 border-amber-200";
         case OrderStatus.Completed:
             return "bg-green-100 text-green-800 border-green-200";
-        case OrderStatus.Cancelled:
+        case OrderStatus.Canceled:
             return "bg-red-100 text-red-800 border-red-200";
         default:
             return "bg-gray-100 text-gray-800 border-gray-200";
@@ -31,14 +31,14 @@ const getStatusText = (status: OrderStatus) => {
             return "Chờ xử lý";
         case OrderStatus.Completed:
             return "Hoàn thành";
-        case OrderStatus.Cancelled:
+        case OrderStatus.Canceled:
             return "Đã hủy";
         default:
             return status;
     }
 };
 
-const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, order }) => {
+const OrderDetailDashboard: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, order }) => {
     const [orderDetails, setOrderDetails] = useState<OrderDetailDto[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -191,7 +191,7 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, or
                                             </div>
                                         ) : orderDetails.length > 0 ? (
                                             <div className="space-y-4">
-                                                {orderDetails.map((item : OrderDetailDto) => (
+                                                {orderDetails.map((item: OrderDetailDto) => (
                                                     <div key={item.id} className="flex gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                                                         {/* Product Image */}
                                                         <div className="flex-shrink-0">
@@ -346,4 +346,4 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({ isOpen, onClose, or
     );
 };
 
-export default OrderDetailModal;
+export default OrderDetailDashboard;

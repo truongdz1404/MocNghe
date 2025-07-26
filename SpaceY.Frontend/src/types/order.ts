@@ -6,8 +6,10 @@ import { User } from "@/types/user";
 export enum OrderStatus {
     Pending = 'Pending',
     Completed = 'Completed',
-    Cancelled = 'Cancelled',
+    Canceled = 'Canceled',
+    Shipped = 'Shipped',
 }
+
 
 export interface CreateOrderDetailDto {
     // productId: number;
@@ -83,4 +85,4 @@ export interface UpdateOrderStatusDto {
 export interface PaginatedData<T> {
     data: T[];
     totalCount: number;
-  }
+}

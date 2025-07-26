@@ -11,8 +11,9 @@ import {
     Checkbox,
     Button,
     IconButton,
+    Alert,
 } from "@/components/ui/MaterialTailwind";
-import { ChevronDown, Plus, X } from "lucide-react";
+import { CheckCircle, ChevronDown, Plus, X, XCircle } from "lucide-react";
 import CategoryServices from "@/services/CategoryServices";
 import ProductServices from "@/services/ProductServices";
 import CloudinaryImageUploader from "@/components/image/ImageUploader";
@@ -45,6 +46,8 @@ interface EditProductPopupProps {
     onUpdated?: () => void;
 }
 
+
+
 export default function EditProductPopup({ product, onClose, onUpdated }: EditProductPopupProps) {
     const [categories, setCategories] = useState<CategoryDto[]>([]);
     const [loading, setLoading] = useState(false);
@@ -70,6 +73,24 @@ export default function EditProductPopup({ product, onClose, onUpdated }: EditPr
         sku: "",
         visible: true
     });
+
+    const [toast, setToast] = useState<{
+        show: boolean;
+        message: string;
+        type: 'success' | 'error';
+    }>({
+        show: false,
+        message: '',
+        type: 'success'
+    });
+
+    // Thêm function showToast
+    const showToast = (message: string, type: 'success' | 'error') => {
+        setToast({ show: true, message, type });
+        setTimeout(() => {
+            setToast(prev => ({ ...prev, show: false }));
+        }, 4000);
+    };
 
     useEffect(() => {
         const loadCategories = async () => {
@@ -121,7 +142,7 @@ export default function EditProductPopup({ product, onClose, onUpdated }: EditPr
 
     const handleAddVariant = () => {
         if (!currentVariant.colorId || !currentVariant.sizeId) {
-            alert("Vui lòng chọn màu sắc và kích thước");
+            showToast("Vui lòng chọn màu sắc và kích thước", "error");
             return;
         }
         const newVariant: ProductVariantDto = {
@@ -148,6 +169,7 @@ export default function EditProductPopup({ product, onClose, onUpdated }: EditPr
             sku: "",
             visible: true
         });
+        showToast("Đã thêm biến thể sản phẩm", "success");
     };
 
     const handleRemoveVariant = (index: number) => {
@@ -178,23 +200,26 @@ export default function EditProductPopup({ product, onClose, onUpdated }: EditPr
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation với toast
         if (!formData.title.trim()) {
-            alert("Vui lòng nhập tên sản phẩm");
+            showToast("Vui lòng nhập tên sản phẩm", "error");
             return;
         }
         if (formData.variants.length === 0) {
-            alert("Vui lòng thêm ít nhất một biến thể sản phẩm");
+            showToast("Vui lòng thêm ít nhất một biến thể sản phẩm", "error");
             return;
         }
+
         setLoading(true);
         try {
             await ProductServices.Update(product.id, formData);
-            alert("Cập nhật sản phẩm thành công!");
+            showToast("Cập nhật sản phẩm thành công!", "success");
             if (onUpdated) onUpdated();
             onClose();
         } catch (error) {
             console.error("Error updating product:", error);
-            alert("Có lỗi xảy ra khi cập nhật sản phẩm");
+            showToast("Có lỗi xảy ra khi cập nhật sản phẩm", "error");
         }
         setLoading(false);
     };
@@ -494,6 +519,33 @@ export default function EditProductPopup({ product, onClose, onUpdated }: EditPr
                     </Button>
                 </div>
             </CardBody>
+            {toast.show && (
+                <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
+                    <Alert
+                        color={toast.type === 'success' ? 'green' : 'red'}
+                        icon={toast.type === 'success' ? <CheckCircle className="h-6 w-6" /> : <XCircle className="h-6 w-6" />}
+                        className="max-w-sm"
+                        action={
+                            <IconButton
+                                variant="text"
+                                color={toast.type === 'success' ? 'green' : 'red'}
+                                size="sm"
+                                className="!absolute !top-3 !right-3"
+                                onClick={() => setToast(prev => ({ ...prev, show: false }))}
+                            >
+                                <X className="h-4 w-4" />
+                            </IconButton>
+                        }
+                    >
+                        <Typography variant="h6" color="white">
+                            {toast.type === 'success' ? 'Thành công!' : 'Lỗi!'}
+                        </Typography>
+                        <Typography variant="small" color="white" className="mt-1 font-normal">
+                            {toast.message}
+                        </Typography>
+                    </Alert>
+                </div>
+            )}
         </Card>
     );
 }
